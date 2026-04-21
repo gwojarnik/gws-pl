@@ -4,7 +4,7 @@
 window.GWS_CONTENT = {
   brand: {
     domain: "gws.pl",
-    owner: "dr inż. [Imię Nazwisko]",
+    owner: "dr Grzegorz Wojarnik",
     role: "Doradztwo strategiczne i szkolenia z zakresu sztucznej inteligencji",
     short: "Łączę wieloletnie doświadczenie akademickie z praktyką budowy systemów informatycznych, doradzając zarządom i zespołom, jak wdrażać AI odpowiedzialnie i z mierzalnym skutkiem."
   },
