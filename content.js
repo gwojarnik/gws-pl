@@ -149,9 +149,9 @@ window.GWS_CONTENT = {
     lead: "Najprostszą drogą jest krótka wiadomość z kontekstem.",
     body: "Odpowiadam osobiście, zwykle w ciągu dwóch dni roboczych. Na pierwszą rozmowę rezerwuję 45 minut; jest bezpłatna i niezobowiązująca.",
     lines: [
-      { k: "E-mail",       v: "kontakt@gws.pl" },
+      { k: "E-mail",       v: "biuro@gws.pl" },
       { k: "Telefon",      v: "dostępny po umówieniu spotkania" },
-      { k: "LinkedIn",     v: "linkedin.com/in/—" },
+      { k: "LinkedIn",     v: "linkedin.com/in/grzegorz-wojarnik" },
       { k: "Siedziba",     v: "Polska · współpraca zdalna i wyjazdowa" }
     ]
   }
