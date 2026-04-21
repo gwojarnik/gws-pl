@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>gws.pl — warianty</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0f1a2e;color:#f5f6f8;font-family:"Instrument Serif",Georgia,serif;min-height:100vh;padding:60px 40px;}
+  .mono{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b94a7}
+  header{max-width:1200px;margin:0 auto 60px;display:grid;gap:16px}
+  header h1{font-size:clamp(40px,5vw,72px);line-height:1;letter-spacing:-.02em;font-weight:400}
+  header p{font-style:italic;color:#b9c0cf;font-size:20px;max-width:60ch;line-height:1.4}
+  .grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .card{background:#0f1a2e;border:1px solid #2a3654;padding:32px;transition:border-color .2s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:20px;min-height:420px}
+  .card:hover{border-color:#2563eb}
+  .card .preview{aspect-ratio:16/10;border:1px solid #2a3654;position:relative;overflow:hidden}
+  .card h2{font-size:32px;line-height:1.05;letter-spacing:-.01em}
+  .card h2 i{color:#8b94a7}
+  .card .desc{font-family:"IBM Plex Mono";font-size:13px;line-height:1.55;color:#b9c0cf;text-transform:none;letter-spacing:0}
+  .card .go{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid #2a3654}
+  .card .go b{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#2563eb}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+  /* Preview A — editorial */
+  .p-a{background:#f5f6f8;color:#0f1a2e;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .p-a .left{border-right:1px solid #0f1a2e;padding-right:14px;display:flex;flex-direction:column;justify-content:space-between}
+  .p-a .big{font-size:28px;line-height:.95;letter-spacing:-.02em;font-weight:400}
+  .p-a .big i{color:#1d4ed8;font-weight:300}
+  .p-a .ribbon{display:flex;justify-content:space-between;font-family:"IBM Plex Mono";font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#5b6479}
+  .p-a .right{background:#0f1a2e;margin:-18px -18px -18px 14px;position:relative}
+  .p-a .right svg{width:100%;height:100%;display:block}
+
+  /* Preview B — bauhaus */
+  .p-b{background:#e8e5de;color:#0f1a2e;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .p-b .left{display:flex;flex-direction:column;justify-content:space-between}
+  .p-b .big{font-size:26px;line-height:.98;letter-spacing:-.02em}
+  .p-b .big i{font-style:italic}
+  .p-b .big u{text-decoration:none;background:#e04a1f;padding:0 .1em}
+  .p-b .ribbon{display:flex;justify-content:space-between;font-family:"IBM Plex Mono";font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#625c52}
+  .p-b .right{background:#f2efe8;border:2px solid #0f1a2e;position:relative}
+  .p-b .right svg{width:100%;height:100%;display:block}
+
+  footer{max-width:1200px;margin:60px auto 0;padding-top:32px;border-top:1px solid #2a3654;display:flex;justify-content:space-between;font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b94a7}
+</style>
+</head>
+<body>
+  <header>
+    <span class="mono">gws.pl · kwiecień 2026</span>
+    <h1>Dwa warianty <i>nowej</i> strony.</h1>
+    <p>Obie: SPA w jednym pliku HTML, lekkie do wdrożenia na GitHub / GitLab Pages lub Supabase Storage. Ton akademicki, bez emoji. Wspólne sekcje (Manifest · O mnie · Doradztwo · Planer szkolenia · FAQ · Kontakt).</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="Wariant A - Editorial Manifesto.html">
+      <div class="preview">
+        <div class="p-a">
+          <div class="left">
+            <div class="ribbon"><span>gws.pl</span><span>No. I</span></div>
+            <div class="big">O <i>sztucznej</i><br>inteligencji.</div>
+            <div class="ribbon"><span>Doradztwo</span><span>Szkolenia</span></div>
+          </div>
+          <div class="right">
+            <svg viewBox="0 0 200 200">
+              <g stroke="#f5f6f8" stroke-width=".5" opacity=".4">
+                <line x1="30" y1="40" x2="90" y2="60"/>
+                <line x1="30" y1="100" x2="90" y2="60"/>
+                <line x1="30" y1="100" x2="90" y2="100"/>
+                <line x1="30" y1="160" x2="90" y2="140"/>
+                <line x1="90" y1="60" x2="150" y2="80"/>
+                <line x1="90" y1="100" x2="150" y2="120"/>
+                <line x1="90" y1="140" x2="150" y2="120"/>
+                <line x1="150" y1="80" x2="180" y2="100"/>
+                <line x1="150" y1="120" x2="180" y2="100"/>
+              </g>
+              <g fill="#f5f6f8">
+                <circle cx="30" cy="40" r="2"/><circle cx="30" cy="100" r="2"/><circle cx="30" cy="160" r="2"/>
+                <circle cx="90" cy="60" r="2"/><circle cx="90" cy="100" r="2"/><circle cx="90" cy="140" r="2"/>
+                <circle cx="150" cy="80" r="2"/><circle cx="150" cy="120" r="2"/>
+              </g>
+              <circle cx="180" cy="100" r="4" fill="#2563eb"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <h2>Wariant A<br><i>Editorial Manifesto</i></h2>
+      <p class="desc">Czarno-kremowy, serif Fraunces + mono JetBrains. Hero z interaktywną siecią neuronową (Canvas), reagującą na kursor i kliknięcia. Ton redakcyjny, typografia jak w magazynie naukowym.</p>
+      <div class="go"><span class="mono">6 sekcji · SPA · ~34 KB</span><b>Otwórz →</b></div>
+    </a>
+
+    <a class="card" href="Wariant B - Bauhaus Intelligentia.html">
+      <div class="preview">
+        <div class="p-b">
+          <div class="left">
+            <div class="ribbon"><span>gws.pl</span><span>Ed. I</span></div>
+            <div class="big">Bez<br><i>mistyfikacji</i>,<br><u>z konsekwencjami</u>.</div>
+            <div class="ribbon"><span>01 Doradztwo</span><span>02 Szkolenia</span></div>
+          </div>
+          <div class="right">
+            <svg viewBox="0 0 200 200">
+              <circle cx="75" cy="85" r="55" fill="#e04a1f"/>
+              <rect x="115" y="45" width="60" height="60" fill="#0f1a2e"/>
+              <circle cx="140" cy="145" r="22" fill="#1f3a8a"/>
+              <rect x="40" y="140" width="22" height="22" fill="#d9a441" transform="rotate(45 51 151)"/>
+              <line x1="10" y1="120" x2="190" y2="120" stroke="#0f1a2e" stroke-width="1"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <h2>Wariant B<br><i>Bauhaus Intelligentia</i></h2>
+      <p class="desc">Kremowy papier, geometryczne bloki, akcent ember + cobalt + ochre. Hero z generatywną kompozycją kształtów (SVG, trzy tryby: uwaga / decyzja / kierunek). Bardziej odważny wizualnie, editorial-swiss.</p>
+      <div class="go"><span class="mono">6 sekcji · SPA · ~44 KB</span><b>Otwórz →</b></div>
+    </a>
+  </div>
+
+  <footer>
+    <span>© 2026 · gws.pl</span>
+    <span>Oba warianty dzielą wspólny plik treści · content.js</span>
+  </footer>
+</body>
+</html>

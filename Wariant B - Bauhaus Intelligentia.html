@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>gws.pl — doradztwo i szkolenia AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f6f8;
+    --bg-2:#e9ecf1;
+    --ink:#0f1a2e;
+    --ink-2:#1e2a44;
+    --mute:#5b6479;
+    --paper:#ffffff;
+    --ember:#2563eb;
+    --ember-d:#1d4ed8;
+    --cobalt:#3b82f6;
+    --ochre:#93c5fd;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-weight:400;}
+  body{font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none}
+  .serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 40px;}
+  @media (max-width:720px){.wrap{padding:0 20px}}
+
+  /* ============ TOP ============ */
+  .top{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:2px solid var(--ink)}
+  .top-inner{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;padding:18px 40px}
+  .mark{display:flex;align-items:center;gap:12px}
+  .mark .dot{width:22px;height:22px;background:var(--ember);border-radius:50%}
+  .mark .sq{width:22px;height:22px;background:var(--ink)}
+  .mark .name{font-family:"Instrument Serif";font-size:26px;letter-spacing:-.01em}
+  .mark .name i{color:var(--mute)}
+  .nav{display:flex;gap:4px;justify-content:center}
+  .nav a{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:10px 14px;border:1px solid transparent;transition:all .15s}
+  .nav a:hover{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+  .cta-small{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px;border:2px solid var(--ink);background:var(--ember);color:var(--ink);cursor:pointer;font-weight:600}
+  .cta-small:hover{background:var(--ink);color:var(--paper)}
+  @media (max-width:900px){.nav{display:none}.top-inner{grid-template-columns:1fr auto}}
+
+  /* ============ HERO ============ */
+  .hero{position:relative;padding:0;border-bottom:2px solid var(--ink);overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;min-height:min(92vh,920px)}
+  .hero-stage{position:relative;border-right:2px solid var(--ink);background:var(--paper);overflow:hidden}
+  #shape-svg{position:absolute;inset:0;width:100%;height:100%}
+  .stage-ov{position:absolute;inset:0;padding:28px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+  .stage-ov .tl{display:flex;justify-content:space-between}
+  .stage-ov .br{display:flex;justify-content:space-between;align-items:flex-end}
+  .stage-ov .br .caption{font-family:"Instrument Serif";font-style:italic;font-size:14px;text-transform:none;letter-spacing:0;color:var(--ink);max-width:36ch;line-height:1.4}
+  .stage-controls{position:absolute;bottom:28px;right:28px;display:flex;gap:8px;pointer-events:auto}
+  .stage-btn{width:38px;height:38px;border:2px solid var(--ink);background:var(--paper);cursor:pointer;font-family:"IBM Plex Mono";font-size:14px;display:grid;place-items:center;padding:0}
+  .stage-btn:hover{background:var(--ember);color:var(--ink)}
+  .stage-btn.on{background:var(--ink);color:var(--paper)}
+
+  .hero-copy{padding:56px 56px 40px;display:flex;flex-direction:column;justify-content:space-between;background:var(--bg)}
+  .hero-eyebrow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px}
+  .hero-eyebrow .tag{background:var(--ink);color:var(--paper);padding:6px 10px;font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+  .hero-title{font-family:"Instrument Serif";font-weight:400;font-size:clamp(42px,6.4vw,108px);line-height:.96;letter-spacing:-.025em;margin:0}
+  .hero-title .i{font-style:italic}
+  .hero-title .u{background:var(--ember);padding:0 .12em;color:var(--ink);display:inline-block}
+  .hero-title .sm{font-size:.55em;display:inline-block;vertical-align:middle;color:var(--mute);font-style:italic}
+  .hero-sub{font-size:18px;line-height:1.5;max-width:46ch;margin:40px 0 0;color:var(--ink-2)}
+  .hero-bottom{margin-top:48px;display:grid;grid-template-columns:1fr 1fr 1fr;border-top:2px solid var(--ink);padding-top:24px;gap:20px}
+  .hb-cell .mono{display:block;margin-bottom:8px}
+  .hb-cell b{font-family:"Instrument Serif";font-size:18px;font-weight:400;line-height:1.25;display:block}
+
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-stage{border-right:0;border-bottom:2px solid var(--ink);min-height:60vh}
+    .hero-copy{padding:32px 20px}
+  }
+
+  /* ============ TICKER ============ */
+  .ticker{background:var(--ink);color:var(--paper);border-bottom:2px solid var(--ink);overflow:hidden}
+  .ticker .track{display:flex;gap:40px;padding:18px 0;white-space:nowrap;animation:mar 50s linear infinite;font-family:"IBM Plex Mono";font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .ticker .track span::before{content:"■";color:var(--ember);margin-right:12px}
+  @keyframes mar{to{transform:translateX(-50%)}}
+
+  /* ============ SECTIONS ============ */
+  section{border-bottom:2px solid var(--ink);padding:110px 0 90px;position:relative}
+  .sec-head{display:grid;grid-template-columns:200px 1fr;gap:48px;margin-bottom:72px;align-items:start}
+  .sec-n{display:flex;align-items:center;gap:10px;font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink)}
+  .sec-n .pin{width:14px;height:14px;background:var(--ember)}
+  .sec-n.sq .pin{background:var(--ink)}
+  .sec-n.cir .pin{background:var(--cobalt);border-radius:50%}
+  .sec-head h2{font-family:"Instrument Serif";font-weight:400;font-size:clamp(36px,5vw,72px);line-height:1;letter-spacing:-.02em;margin:0;max-width:22ch}
+  .sec-head h2 .i{font-style:italic;color:var(--mute)}
+  .sec-head h2 .u{background:var(--ember);padding:0 .1em}
+  @media (max-width:720px){.sec-head{grid-template-columns:1fr;gap:16px;margin-bottom:48px}}
+
+  /* ============ MANIFEST (bauhaus grid) ============ */
+  .manifest{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:min-content;gap:0;border:2px solid var(--ink);background:var(--paper)}
+  .man-cell{border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:32px 28px;min-height:300px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+  .man-cell:last-child{border-right:0}
+  .man-cell.text{grid-column:span 2}
+  .man-cell.shape{background:var(--ember)}
+  .man-cell.shape.cobalt{background:var(--cobalt)}
+  .man-cell.shape.ink{background:var(--ink)}
+  .man-cell .num{font-family:"Instrument Serif";font-style:italic;font-size:40px;color:var(--mute)}
+  .man-cell p{font-family:"Instrument Serif";font-size:24px;line-height:1.2;margin:0;letter-spacing:-.005em;max-width:28ch}
+  .man-cell .decoration{position:absolute;inset:0}
+  .man-cell.shape .label{position:absolute;bottom:20px;left:24px;font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper);opacity:.8;z-index:2}
+  .man-cell.shape.ember .label{color:var(--ink);opacity:.7}
+
+  @media (max-width:900px){
+    .manifest{grid-template-columns:1fr 1fr}
+    .man-cell.text{grid-column:span 2}
+    .man-cell{border-right:2px solid var(--ink)}
+    .man-cell:nth-child(2n){border-right:0}
+  }
+
+  /* ============ ABOUT ============ */
+  .about{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:start}
+  .about-card{background:var(--paper);border:2px solid var(--ink);padding:48px;position:relative}
+  .about-card::before{content:"";position:absolute;top:-2px;left:-2px;width:60px;height:60px;background:var(--ember);border-right:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+  .about-card .tag{position:absolute;top:20px;left:20px;font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;color:var(--ink);z-index:2}
+  .about-lead{font-family:"Instrument Serif";font-style:italic;font-size:clamp(26px,3vw,40px);line-height:1.15;margin:40px 0 24px;max-width:22ch}
+  .about-body{font-size:17px;line-height:1.65;max-width:56ch;color:var(--ink-2)}
+  .pillars{display:grid;gap:0;border:2px solid var(--ink);background:var(--paper)}
+  .pillar{display:grid;grid-template-columns:48px 1fr;gap:20px;padding:20px 24px;border-bottom:2px solid var(--ink);align-items:start}
+  .pillar:last-child{border-bottom:0}
+  .pillar .icon{width:32px;height:32px}
+  .pillar .icon.sq{background:var(--ember)}
+  .pillar .icon.cir{background:var(--cobalt);border-radius:50%}
+  .pillar .icon.tri{width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:28px solid var(--ochre);background:transparent}
+  .pillar .icon.di{background:var(--ink);transform:rotate(45deg);width:24px;height:24px;margin-top:4px;margin-left:4px}
+  .pillar .k{font-weight:600;font-size:14px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+  .pillar .v{font-size:15px;line-height:1.5;color:var(--mute)}
+  @media (max-width:900px){.about{grid-template-columns:1fr}}
+
+  /* ============ SERVICES ============ */
+  .svc-wall{display:grid;grid-template-columns:repeat(12,1fr);gap:0;border:2px solid var(--ink);background:var(--paper)}
+  .svc-block{padding:32px 28px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);display:flex;flex-direction:column;gap:16px;min-height:340px;position:relative;transition:background .2s}
+  .svc-block:hover{background:var(--bg-2)}
+  .svc-block .shape{width:40px;height:40px}
+  .svc-block .shape.cir{background:var(--ember);border-radius:50%}
+  .svc-block .shape.sq{background:var(--ink)}
+  .svc-block .shape.tri{width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-bottom:34px solid var(--cobalt)}
+  .svc-block .shape.di{background:var(--ochre);transform:rotate(45deg);width:28px;height:28px;margin:6px}
+  .svc-block .shape.hr{background:var(--ember);height:14px;width:56px}
+  .svc-block .code{font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;color:var(--mute)}
+  .svc-block h3{font-family:"Instrument Serif";font-weight:400;font-size:30px;line-height:1;margin:0;letter-spacing:-.01em}
+  .svc-block .sub{font-style:italic;color:var(--mute);font-size:14px;font-family:"Instrument Serif"}
+  .svc-block .body{font-size:14px;line-height:1.55;color:var(--ink-2);margin:0}
+  .svc-block .meta{margin-top:auto;display:grid;gap:4px;padding-top:16px;border-top:1px solid rgba(18,17,16,.15)}
+  .svc-block .meta .row{display:grid;grid-template-columns:80px 1fr;gap:12px;font-size:12px}
+  .svc-block .meta .row .k{font-family:"IBM Plex Mono";font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+
+  /* asymmetric grid spans */
+  .svc-block.s1{grid-column:span 5}
+  .svc-block.s2{grid-column:span 7;border-right:0}
+  .svc-block.s3{grid-column:span 4}
+  .svc-block.s4{grid-column:span 4}
+  .svc-block.s5{grid-column:span 4;border-right:0;border-bottom:0}
+  .svc-block.s1, .svc-block.s2{border-bottom:2px solid var(--ink)}
+  .svc-block.s3, .svc-block.s4{border-bottom:0}
+
+  @media (max-width:900px){
+    .svc-wall{grid-template-columns:1fr}
+    .svc-block{grid-column:span 1!important;border-right:0!important;border-bottom:2px solid var(--ink)!important}
+    .svc-block:last-child{border-bottom:0!important}
+  }
+
+  /* ============ PLANNER ============ */
+  .planner-sec{background:var(--ink);color:var(--paper);border-bottom:2px solid var(--ink)}
+  .planner-sec .sec-head h2{color:var(--paper)}
+  .planner-sec .sec-head h2 .i{color:#8c8679}
+  .planner-sec .sec-n{color:var(--paper)}
+  .planner{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  .steps{display:grid;gap:32px}
+  .step{border-top:2px solid var(--paper);padding-top:18px}
+  .step-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+  .step-h .t{font-family:"Instrument Serif";font-size:22px}
+  .step-h .n{font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;color:#8c8679;display:flex;align-items:center;gap:8px}
+  .step-h .n .b{width:10px;height:10px;background:var(--ember)}
+  .choices{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 14px;border:2px solid var(--paper);color:var(--paper);background:transparent;cursor:pointer;transition:all .12s;font-weight:500}
+  .chip:hover{background:rgba(242,239,232,.08)}
+  .chip.on{background:var(--ember);color:var(--ink);border-color:var(--ember)}
+  .chip .d{display:block;font-family:"Instrument Serif";font-style:italic;font-weight:400;font-size:12px;text-transform:none;letter-spacing:0;color:#8c8679;margin-top:4px}
+  .chip.on .d{color:var(--ink)}
+  .plan-card{background:var(--paper);color:var(--ink);border:2px solid var(--paper);padding:36px;position:relative;min-height:420px;display:flex;flex-direction:column;justify-content:space-between}
+  .plan-card::before{content:"";position:absolute;top:0;right:0;width:80px;height:80px;background:var(--ember)}
+  .plan-card::after{content:"";position:absolute;top:20px;right:20px;width:40px;height:40px;background:var(--ink);border-radius:50%;z-index:1}
+  .pc-top{display:flex;justify-content:space-between;font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);position:relative;z-index:2;margin-right:100px}
+  .plan-title{font-family:"Instrument Serif";font-size:36px;line-height:1.05;margin:20px 0 8px;letter-spacing:-.01em;max-width:18ch;position:relative;z-index:2}
+  .plan-sub{font-family:"Instrument Serif";font-style:italic;font-size:16px;color:var(--mute);margin-bottom:24px}
+  .plan-mods{display:grid;gap:0;border-top:1px solid var(--ink)}
+  .plan-mod{display:grid;grid-template-columns:40px 1fr auto;gap:16px;padding:12px 0;border-bottom:1px solid rgba(18,17,16,.15);align-items:baseline}
+  .plan-mod:last-child{border-bottom:0}
+  .plan-mod .i{font-family:"IBM Plex Mono";font-size:10px;color:var(--mute)}
+  .plan-mod .t{font-family:"Instrument Serif";font-size:16px}
+  .plan-mod .h{font-family:"IBM Plex Mono";font-size:11px;color:var(--ember-d);font-weight:500}
+  .plan-foot{display:grid;grid-template-columns:1fr auto;gap:24px;margin-top:20px;padding-top:20px;border-top:2px solid var(--ink);align-items:end}
+  .plan-foot .lbl{font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);display:block;margin-bottom:4px}
+  .plan-foot .v{font-family:"Instrument Serif";font-size:22px;line-height:1.1}
+  .plan-cta{margin-top:24px;width:100%;padding:16px;background:var(--ember);color:var(--ink);border:2px solid var(--ink);font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-weight:600}
+  .plan-cta:hover{background:var(--ink);color:var(--paper)}
+  @media (max-width:900px){.planner{grid-template-columns:1fr}}
+
+  /* ============ FAQ ============ */
+  .faq-list{border:2px solid var(--ink);background:var(--paper)}
+  .faq-item{border-bottom:2px solid var(--ink)}
+  .faq-item:last-child{border-bottom:0}
+  .faq-q{display:grid;grid-template-columns:80px 1fr 60px;align-items:center;padding:24px 28px;cursor:pointer;gap:20px}
+  .faq-q .n{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;color:var(--mute)}
+  .faq-q .t{font-family:"Instrument Serif";font-size:22px;line-height:1.25;letter-spacing:-.005em}
+  .faq-q .x{width:32px;height:32px;background:var(--ink);color:var(--paper);border-radius:50%;display:grid;place-items:center;font-size:18px;justify-self:end;transition:all .2s}
+  .faq-item.on .faq-q .x{background:var(--ember);color:var(--ink);transform:rotate(45deg)}
+  .faq-a{display:grid;grid-template-columns:80px 1fr 60px;gap:20px;max-height:0;overflow:hidden;transition:max-height .35s,padding .35s}
+  .faq-item.on .faq-a{max-height:320px;padding:0 28px 28px}
+  .faq-a .body{font-size:16px;line-height:1.6;color:var(--ink-2);max-width:60ch;grid-column:2}
+
+  /* ============ CONTACT ============ */
+  .contact{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start}
+  .contact-card{background:var(--paper);border:2px solid var(--ink);padding:40px;position:relative}
+  .contact-card::before{content:"";position:absolute;top:0;right:0;width:120px;height:120px;background:var(--ember)}
+  .contact-card::after{content:"";position:absolute;top:30px;right:30px;width:60px;height:60px;background:var(--cobalt);border-radius:50%}
+  .contact-lead{font-family:"Instrument Serif";font-style:italic;font-size:clamp(28px,3.4vw,42px);line-height:1.1;margin:0 0 20px;max-width:14ch;position:relative;z-index:2}
+  .contact-body{font-size:16px;line-height:1.6;color:var(--ink-2);max-width:44ch;margin:0 0 32px}
+  .c-lines{border-top:2px solid var(--ink)}
+  .c-line{display:grid;grid-template-columns:140px 1fr;gap:20px;padding:14px 0;border-bottom:1px solid rgba(18,17,16,.2);align-items:baseline}
+  .c-line:last-child{border-bottom:0}
+  .c-line .k{font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+  .c-line .v{font-family:"Instrument Serif";font-size:17px}
+  .form{background:var(--bg-2);border:2px solid var(--ink);padding:32px}
+  .form label{display:block;font-family:"IBM Plex Mono";font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:18px 0 6px}
+  .form label:first-child{margin-top:0}
+  .form input,.form select,.form textarea{width:100%;border:2px solid var(--ink);background:var(--paper);padding:12px 14px;font-family:"IBM Plex Sans";font-size:15px;color:var(--ink);outline:none}
+  .form textarea{resize:vertical;min-height:100px;line-height:1.5;font-family:"IBM Plex Sans"}
+  .form input:focus,.form select:focus,.form textarea:focus{background:var(--bg)}
+  .form .submit{width:100%;margin-top:24px;padding:16px;background:var(--ember);color:var(--ink);border:2px solid var(--ink);font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-weight:600}
+  .form .submit:hover{background:var(--ink);color:var(--paper)}
+  @media (max-width:900px){.contact{grid-template-columns:1fr}}
+
+  /* ============ FOOTER ============ */
+  footer{padding:32px 0 48px;background:var(--ink);color:var(--paper)}
+  .foot{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+  .foot .mark .name{color:var(--paper)}
+  .foot .mark .name i{color:#8c8679}
+  .foot .col{font-family:"IBM Plex Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8c8679}
+  .foot .col a:hover{color:var(--ember)}
+  @media (max-width:720px){.foot{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOP -->
+<header class="top">
+  <div class="top-inner">
+    <a class="mark" href="#top">
+      <span class="dot"></span>
+      <span class="sq"></span>
+      <span class="name"><i>gws</i>.pl</span>
+    </a>
+    <nav class="nav">
+      <a href="#manifest">Manifest</a>
+      <a href="#about">O mnie</a>
+      <a href="#services">Doradztwo</a>
+      <a href="#extras">Dodatkowe</a>
+      <a href="#planner">Planer</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+    <button class="cta-small" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Rozmowa 45 min</button>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-stage">
+      <svg id="shape-svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice"></svg>
+      <div class="stage-ov">
+        <div class="tl">
+          <span>Fig. 01 — Kompozycja</span>
+          <span>SPA / Gws.pl</span>
+        </div>
+        <div class="br">
+          <span class="caption">Inteligencja jako kompozycja elementów: uwagi, danych, decyzji. Przełącz tryb, by zobaczyć inną konfigurację.</span>
+          <span></span>
+        </div>
+      </div>
+      <div class="stage-controls">
+        <button class="stage-btn on" data-mode="0" title="Koło · uwaga">●</button>
+        <button class="stage-btn" data-mode="1" title="Kwadrat · decyzja">■</button>
+        <button class="stage-btn" data-mode="2" title="Trójkąt · kierunek">▲</button>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <div>
+        <div class="hero-eyebrow">
+          <span class="tag">Kwiecień 2026</span>
+          <span class="mono">Edycja I · Manifest</span>
+        </div>
+        <h1 class="hero-title">
+          Sztuczna<br>
+          <span class="i">inteligencja</span>,<br>
+          <span class="u">bez mistyfikacji</span>.
+        </h1>
+        <p class="hero-sub">Doradzam zarządom, uczę kadry zarządzające i prowadzę warsztaty dla zespołów. Akademia, inżynieria i praktyka doradcza — w jednej, uporządkowanej ofercie.</p>
+      </div>
+      <div class="hero-bottom">
+        <div class="hb-cell"><span class="mono">01 · Doradztwo</span><b>Strategia AI<br>i model operacyjny</b></div>
+        <div class="hb-cell"><span class="mono">02 · Szkolenia</span><b>Zarządy i zespoły<br>specjalistyczne</b></div>
+        <div class="hb-cell"><span class="mono">03 · Mentoring</span><b>Cykliczna praca<br>z liderami</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="track" id="ticker-track"></div>
+</div>
+
+<!-- MANIFEST -->
+<section id="manifest">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n"><span class="pin"></span>§ 01 · Manifest</div>
+      <h2>Cztery tezy. <span class="i">Bez</span> hype'u, <span class="u">z&nbsp;konsekwencjami</span>.</h2>
+    </div>
+    <div class="manifest" id="manifest-list"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n sq"><span class="pin"></span>§ 02 · O&nbsp;mnie</div>
+      <h2>Dwie dekady pracy <span class="i">na&nbsp;styku</span> akademii i&nbsp;inżynierii.</h2>
+    </div>
+    <div class="about">
+      <div class="about-card">
+        <span class="tag">SYLWETKA · 01</span>
+        <p class="about-lead" id="about-lead"></p>
+        <div class="about-body" id="about-body"></div>
+      </div>
+      <div class="pillars" id="pillars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n cir"><span class="pin"></span>§ 03 · Usługi</div>
+      <h2>Pięć form <span class="i">pracy</span> z&nbsp;organizacjami.</h2>
+    </div>
+    <div class="svc-wall" id="svc-wall"></div>
+  </div>
+</section>
+
+<!-- EXTRAS -->
+<section id="extras">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n"><span class="pin" style="background:var(--cobalt);border-radius:50%"></span>§ 03.5 · Obszary dodatkowe</div>
+      <h2>Dwa <span class="i">wyspecjalizowane</span> obszary.</h2>
+    </div>
+    <p style="font-family:'Instrument Serif';font-style:italic;font-size:clamp(22px,2.6vw,32px);line-height:1.2;max-width:34ch;margin:0 0 40px;color:var(--mute)" id="extras-lead"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:2px solid var(--ink);background:var(--paper)" id="extras-list"></div>
+  </div>
+</section>
+
+<!-- PLANNER -->
+<section id="planner" class="planner-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n"><span class="pin" style="background:var(--ember)"></span>§ 04 · Planer szkolenia</div>
+      <h2>Zbuduj <span class="i" style="color:var(--ember)">szkic</span> szkolenia w&nbsp;60&nbsp;sekund.</h2>
+    </div>
+    <div class="planner">
+      <div class="steps">
+        <div class="step"><div class="step-h"><span class="t">Dla kogo?</span><span class="n"><span class="b"></span>Krok 01</span></div><div class="choices" id="c-audience"></div></div>
+        <div class="step"><div class="step-h"><span class="t">Jaki cel?</span><span class="n"><span class="b"></span>Krok 02</span></div><div class="choices" id="c-goals"></div></div>
+        <div class="step"><div class="step-h"><span class="t">Jak długo?</span><span class="n"><span class="b"></span>Krok 03</span></div><div class="choices" id="c-duration"></div></div>
+        <div class="step"><div class="step-h"><span class="t">Forma?</span><span class="n"><span class="b"></span>Krok 04</span></div><div class="choices" id="c-format"></div></div>
+      </div>
+      <div class="plan-card" id="plan-card"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n sq"><span class="pin"></span>§ 05 · FAQ</div>
+      <h2>Sześć pytań, które <span class="i">słyszę</span> najczęściej.</h2>
+    </div>
+    <div class="faq-list" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-n cir"><span class="pin"></span>§ 06 · Kontakt</div>
+      <h2>Pierwsza rozmowa — <span class="u">bezpłatna</span>, 45 minut.</h2>
+    </div>
+    <div class="contact">
+      <div class="contact-card">
+        <p class="contact-lead" id="contact-lead"></p>
+        <p class="contact-body" id="contact-body"></p>
+        <div class="c-lines" id="c-lines"></div>
+      </div>
+      <form class="form" onsubmit="event.preventDefault();alert('Dziękuję. Odpowiem w ciągu dwóch dni roboczych.');">
+        <label>Imię i nazwisko</label>
+        <input type="text" required placeholder="Jak mam się zwracać?">
+        <label>Organizacja</label>
+        <input type="text" placeholder="Opcjonalnie">
+        <label>E-mail</label>
+        <input type="email" required placeholder="adres@firma.pl">
+        <label>Temat</label>
+        <select>
+          <option>Doradztwo strategiczne</option>
+          <option>Szkolenie dla zarządu</option>
+          <option>Warsztat prompt / LLM</option>
+          <option>Mentoring / office hours</option>
+          <option>Prelekcja / wykład</option>
+        </select>
+        <label>Kontekst — kilka zdań</label>
+        <textarea required placeholder="Co się u Państwa dzieje i co skłoniło do tej wiadomości?"></textarea>
+        <button class="submit" type="submit">Wyślij zapytanie →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span class="mark"><span class="dot"></span><span class="sq" style="background:var(--paper)"></span><span class="name"><i>gws</i>.pl</span></span>
+    <span class="col" style="text-align:center">© 2026 · Doradztwo i szkolenia AI</span>
+    <span class="col"><a href="#">Polityka prywatności</a> · <a href="#">Regulamin</a></span>
+  </div>
+</footer>
+
+<script src="content.js?v=2"></script>
+<script>
+/* ============ HERO: generative bauhaus composition ============ */
+(() => {
+  const svg = document.getElementById('shape-svg');
+  const NS = 'http://www.w3.org/2000/svg';
+  let mode = 0;
+  let shapes = [];
+  let rafId = null;
+
+  const palette = {
+    ink:'#0f1a2e', paper:'#ffffff', ember:'#2563eb',
+    cobalt:'#3b82f6', ochre:'#93c5fd', bg:'#f5f6f8'
+  };
+
+  function clear(){ while(svg.firstChild) svg.removeChild(svg.firstChild); }
+
+  function build(){
+    clear();
+    shapes = [];
+
+    // base backdrop rectangle(s) for rhythm
+    const bg = document.createElementNS(NS,'rect');
+    bg.setAttribute('x',0); bg.setAttribute('y',0);
+    bg.setAttribute('width',600); bg.setAttribute('height',600);
+    bg.setAttribute('fill',palette.paper);
+    svg.appendChild(bg);
+
+    // dotted grid
+    const grid = document.createElementNS(NS,'g');
+    grid.setAttribute('opacity','0.12');
+    for(let x=40;x<600;x+=40){
+      for(let y=40;y<600;y+=40){
+        const d = document.createElementNS(NS,'circle');
+        d.setAttribute('cx',x); d.setAttribute('cy',y); d.setAttribute('r','1');
+        d.setAttribute('fill',palette.ink);
+        grid.appendChild(d);
+      }
+    }
+    svg.appendChild(grid);
+
+    // Mode-specific composition
+    const compositions = [compMode0, compMode1, compMode2];
+    compositions[mode]();
+
+    // axis caption
+    const cap = document.createElementNS(NS,'text');
+    cap.setAttribute('x',20); cap.setAttribute('y',584);
+    cap.setAttribute('font-family','IBM Plex Mono,monospace');
+    cap.setAttribute('font-size','9');
+    cap.setAttribute('letter-spacing','1.5');
+    cap.setAttribute('fill',palette.ink);
+    cap.setAttribute('opacity','.4');
+    cap.textContent = ['UWAGA / ATTENTION','DECYZJA / DECISION','KIERUNEK / VECTOR'][mode].toUpperCase();
+    svg.appendChild(cap);
+  }
+
+  function addShape(el, anim){
+    svg.appendChild(el);
+    if(anim){
+      shapes.push({el, ...anim});
+    }
+  }
+
+  // MODE 0: circles — attention
+  function compMode0(){
+    // big ember circle
+    const big = document.createElementNS(NS,'circle');
+    big.setAttribute('cx',220); big.setAttribute('cy',240);
+    big.setAttribute('r',160); big.setAttribute('fill',palette.ember);
+    addShape(big, {cx:220,cy:240,r:160,base:{cx:220,cy:240},drift:{a:0,s:0.003,amp:8}});
+
+    // ink square behind — intersecting
+    const sq = document.createElementNS(NS,'rect');
+    sq.setAttribute('x',340); sq.setAttribute('y',140);
+    sq.setAttribute('width',180); sq.setAttribute('height',180);
+    sq.setAttribute('fill',palette.ink);
+    svg.appendChild(sq);
+
+    // small cobalt circle floating
+    const c2 = document.createElementNS(NS,'circle');
+    c2.setAttribute('cx',420); c2.setAttribute('cy',420);
+    c2.setAttribute('r',70); c2.setAttribute('fill',palette.cobalt);
+    addShape(c2, {cx:420,cy:420,r:70,base:{cx:420,cy:420},drift:{a:1.5,s:0.005,amp:14}});
+
+    // ochre diamond
+    const di = document.createElementNS(NS,'rect');
+    di.setAttribute('x',150); di.setAttribute('y',420);
+    di.setAttribute('width',60); di.setAttribute('height',60);
+    di.setAttribute('fill',palette.ochre);
+    di.setAttribute('transform','rotate(45 180 450)');
+    svg.appendChild(di);
+
+    // dividing line
+    const ln = document.createElementNS(NS,'line');
+    ln.setAttribute('x1',0); ln.setAttribute('y1',360);
+    ln.setAttribute('x2',600); ln.setAttribute('y2',360);
+    ln.setAttribute('stroke',palette.ink);
+    ln.setAttribute('stroke-width','2');
+    svg.appendChild(ln);
+
+    // orbital ring
+    const ring = document.createElementNS(NS,'circle');
+    ring.setAttribute('cx',220); ring.setAttribute('cy',240);
+    ring.setAttribute('r',200); ring.setAttribute('fill','none');
+    ring.setAttribute('stroke',palette.ink); ring.setAttribute('stroke-width','1');
+    ring.setAttribute('stroke-dasharray','4 6');
+    svg.appendChild(ring);
+
+    // satellite
+    const sat = document.createElementNS(NS,'circle');
+    sat.setAttribute('r',12); sat.setAttribute('fill',palette.ink);
+    svg.appendChild(sat);
+    shapes.push({el:sat, orbit:{cx:220,cy:240,r:200,a:0,s:0.012}});
+  }
+
+  // MODE 1: squares — decision
+  function compMode1(){
+    // stacked squares
+    [
+      {x:80,y:80,w:220,h:220,f:palette.ink},
+      {x:160,y:160,w:220,h:220,f:palette.ember},
+      {x:240,y:240,w:220,h:220,f:palette.cobalt}
+    ].forEach((s,i)=>{
+      const r = document.createElementNS(NS,'rect');
+      r.setAttribute('x',s.x); r.setAttribute('y',s.y);
+      r.setAttribute('width',s.w); r.setAttribute('height',s.h);
+      r.setAttribute('fill',s.f);
+      svg.appendChild(r);
+    });
+
+    // paper circle punching through
+    const hole = document.createElementNS(NS,'circle');
+    hole.setAttribute('cx',350); hole.setAttribute('cy',350);
+    hole.setAttribute('r',80); hole.setAttribute('fill',palette.paper);
+    svg.appendChild(hole);
+
+    // floating ochre square
+    const fl = document.createElementNS(NS,'rect');
+    fl.setAttribute('x',420); fl.setAttribute('y',80);
+    fl.setAttribute('width',90); fl.setAttribute('height',90);
+    fl.setAttribute('fill',palette.ochre);
+    addShape(fl, {x:420,y:80,w:90,h:90,base:{x:420,y:80},drift:{a:2,s:0.006,amp:16}});
+
+    // thin diagonal line
+    const ln = document.createElementNS(NS,'line');
+    ln.setAttribute('x1',40); ln.setAttribute('y1',540);
+    ln.setAttribute('x2',560); ln.setAttribute('y2',40);
+    ln.setAttribute('stroke',palette.ink);
+    ln.setAttribute('stroke-width','1.5');
+    ln.setAttribute('stroke-dasharray','2 4');
+    svg.appendChild(ln);
+
+    // small dot cluster at 350,350
+    for(let i=0;i<5;i++){
+      const d = document.createElementNS(NS,'circle');
+      d.setAttribute('r',4); d.setAttribute('fill',palette.ink);
+      svg.appendChild(d);
+      shapes.push({el:d, orbit:{cx:350,cy:350,r:80,a:i*Math.PI*2/5,s:0.008}});
+    }
+  }
+
+  // MODE 2: triangles — vector/direction
+  function compMode2(){
+    // large cobalt triangle
+    const t1 = document.createElementNS(NS,'polygon');
+    t1.setAttribute('points','100,440 300,80 500,440');
+    t1.setAttribute('fill',palette.cobalt);
+    svg.appendChild(t1);
+
+    // ember triangle pointing left
+    const t2 = document.createElementNS(NS,'polygon');
+    t2.setAttribute('points','500,120 200,260 500,400');
+    t2.setAttribute('fill',palette.ember);
+    t2.setAttribute('opacity','.92');
+    svg.appendChild(t2);
+
+    // ink horizontal bar
+    const bar = document.createElementNS(NS,'rect');
+    bar.setAttribute('x',0); bar.setAttribute('y',460);
+    bar.setAttribute('width',600); bar.setAttribute('height',18);
+    bar.setAttribute('fill',palette.ink);
+    svg.appendChild(bar);
+
+    // ochre dot
+    const dot = document.createElementNS(NS,'circle');
+    dot.setAttribute('cx',150); dot.setAttribute('cy',520);
+    dot.setAttribute('r',30); dot.setAttribute('fill',palette.ochre);
+    addShape(dot, {cx:150,cy:520,r:30,base:{cx:150,cy:520},drift:{a:0.5,s:0.005,amp:60,axis:'x'}});
+
+    // small paper tri
+    const t3 = document.createElementNS(NS,'polygon');
+    t3.setAttribute('points','70,90 130,180 10,180');
+    t3.setAttribute('fill',palette.paper);
+    t3.setAttribute('stroke',palette.ink);
+    t3.setAttribute('stroke-width','2');
+    svg.appendChild(t3);
+
+    // arrow path
+    const arrow = document.createElementNS(NS,'path');
+    arrow.setAttribute('d','M40 520 L540 520');
+    arrow.setAttribute('stroke',palette.paper);
+    arrow.setAttribute('stroke-width','2');
+    svg.appendChild(arrow);
+    const head = document.createElementNS(NS,'polygon');
+    head.setAttribute('points','540,510 560,520 540,530');
+    head.setAttribute('fill',palette.paper);
+    svg.appendChild(head);
+  }
+
+  function animate(){
+    shapes.forEach(s=>{
+      if(s.orbit){
+        s.orbit.a += s.orbit.s;
+        const x = s.orbit.cx + Math.cos(s.orbit.a)*s.orbit.r;
+        const y = s.orbit.cy + Math.sin(s.orbit.a)*s.orbit.r;
+        s.el.setAttribute('cx',x); s.el.setAttribute('cy',y);
+      }
+      if(s.drift){
+        s.drift.a += s.drift.s;
+        const off = Math.sin(s.drift.a)*s.drift.amp;
+        if(s.base.cx !== undefined){
+          if(s.drift.axis==='x') s.el.setAttribute('cx', s.base.cx+off);
+          else s.el.setAttribute('cy', s.base.cy+off);
+        } else if(s.base.x !== undefined){
+          s.el.setAttribute('y', s.base.y+off);
+        }
+      }
+    });
+    rafId = requestAnimationFrame(animate);
+  }
+
+  document.querySelectorAll('.stage-btn').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.stage-btn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      mode = +b.dataset.mode;
+      build();
+    });
+  });
+
+  build();
+  animate();
+})();
+
+/* ============ CONTENT ============ */
+const C = window.GWS_CONTENT;
+
+// MANIFEST — mix text blocks and shape blocks
+const manifestHtml = `
+  <div class="man-cell text"><span class="num">${C.manifest[0].n}</span><p>${C.manifest[0].text}</p></div>
+  <div class="man-cell shape ember"><svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><circle cx="100" cy="150" r="90" fill="#0f1a2e"/><circle cx="100" cy="150" r="40" fill="#2563eb"/></svg><span class="label">Fig. 01 · Uwaga</span></div>
+  <div class="man-cell shape cobalt"><svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect x="40" y="60" width="120" height="120" fill="#2563eb"/><rect x="90" y="110" width="80" height="80" fill="#ffffff"/></svg><span class="label">Fig. 02 · Decyzja</span></div>
+  <div class="man-cell text"><span class="num">${C.manifest[1].n}</span><p>${C.manifest[1].text}</p></div>
+  <div class="man-cell text"><span class="num">${C.manifest[2].n}</span><p>${C.manifest[2].text}</p></div>
+  <div class="man-cell shape ink"><svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><polygon points="100,50 180,220 20,220" fill="#93c5fd"/><line x1="20" y1="220" x2="180" y2="220" stroke="#ffffff" stroke-width="3"/></svg><span class="label" style="color:#ffffff;opacity:.7">Fig. 03 · Kierunek</span></div>
+  <div class="man-cell shape ember"><svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect x="0" y="140" width="200" height="8" fill="#0f1a2e"/><rect x="20" y="40" width="60" height="60" fill="#3b82f6"/><circle cx="140" cy="200" r="40" fill="#0f1a2e"/></svg><span class="label">Fig. 04 · Pracownia</span></div>
+  <div class="man-cell text"><span class="num">${C.manifest[3].n}</span><p>${C.manifest[3].text}</p></div>
+`;
+document.getElementById('manifest-list').innerHTML = manifestHtml;
+
+// ABOUT
+document.getElementById('about-lead').textContent = C.about.lead;
+document.getElementById('about-body').innerHTML = C.about.body.split('\n\n').map(p=>`<p style="margin:0 0 1em">${p}</p>`).join('');
+const iconClasses = ['sq','cir','tri','di'];
+document.getElementById('pillars').innerHTML = C.about.pillars.map((p,i)=>`
+  <div class="pillar">
+    <span class="icon ${iconClasses[i]}"></span>
+    <div>
+      <div class="k">${p.k}</div>
+      <div class="v">${p.v}</div>
+    </div>
+  </div>
+`).join('');
+
+// SERVICES
+const shapeClass = ['cir','sq','tri','di','hr'];
+const sizeClass  = ['s1','s2','s3','s4','s5'];
+document.getElementById('svc-wall').innerHTML = C.services.map((s,i)=>`
+  <div class="svc-block ${sizeClass[i]}">
+    <div class="shape ${shapeClass[i]}"></div>
+    <span class="code">${s.code}</span>
+    <h3>${s.title}</h3>
+    <span class="sub">${s.subtitle}</span>
+    <p class="body">${s.body}</p>
+    <div class="meta">
+      <div class="row"><span class="k">Dla kogo</span><span>${s.for}</span></div>
+      <div class="row"><span class="k">Format</span><span>${s.format}</span></div>
+    </div>
+  </div>
+`).join('');
+
+// Extras
+document.getElementById('extras-lead').textContent = C.extras.lead;
+document.getElementById('extras-list').innerHTML = C.extras.items.map((s,i)=>`
+  <div style="padding:32px 28px;${i===0?'border-right:2px solid var(--ink);':''}display:flex;flex-direction:column;gap:14px;min-height:340px">
+    <div style="width:40px;height:40px;background:${i===0?'var(--cobalt);border-radius:50%':'var(--ink)'}"></div>
+    <span style="font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.14em;color:var(--mute)">Obszar · ${s.code}</span>
+    <h3 style="font-family:'Instrument Serif';font-weight:400;font-size:30px;line-height:1;margin:0;letter-spacing:-.01em">${s.title}</h3>
+    <span style="font-style:italic;color:var(--mute);font-size:14px;font-family:'Instrument Serif'">${s.subtitle}</span>
+    <p style="font-size:14px;line-height:1.55;color:var(--ink-2);margin:0">${s.body}</p>
+    <div style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(15,26,46,.15);display:grid;grid-template-columns:80px 1fr;gap:12px;font-size:12px">
+      <span style="font-family:'IBM Plex Mono';font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)">Format</span>
+      <span>${s.format}</span>
+    </div>
+  </div>
+`).join('');
+
+// FAQ
+document.getElementById('faq-list').innerHTML = C.faq.map((f,i)=>`
+  <div class="faq-item">
+    <div class="faq-q">
+      <span class="n">${String(i+1).padStart(2,'0')} / ${String(C.faq.length).padStart(2,'0')}</span>
+      <span class="t">${f.q}</span>
+      <span class="x">+</span>
+    </div>
+    <div class="faq-a"><span class="body">${f.a}</span></div>
+  </div>
+`).join('');
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click', ()=>q.parentElement.classList.toggle('on'));
+});
+
+// CONTACT
+document.getElementById('contact-lead').textContent = C.contact.lead;
+document.getElementById('contact-body').textContent = C.contact.body;
+document.getElementById('c-lines').innerHTML = C.contact.lines.map(l=>`
+  <div class="c-line"><span class="k">${l.k}</span><span class="v">${l.v}</span></div>
+`).join('');
+
+// TICKER
+const tickerItems = ['Strategia AI','Szkolenia zarządów','Prompt engineering','AI Act','Mentoring CTO','Warsztaty LLM','Prelekcje','Office hours','Wdrożenia pilotażowe'];
+document.getElementById('ticker-track').innerHTML = tickerItems.concat(tickerItems).concat(tickerItems).map(t=>`<span>${t}</span>`).join('');
+
+/* ============ PLANNER (shared logic) ============ */
+const state = { audience:'board', goals:new Set(['strategy']), duration:'full', format:'onsite' };
+
+function renderChips(){
+  const mk = (el, items, type) => {
+    el.innerHTML = items.map(it=>{
+      const on = type==='goals' ? state.goals.has(it.id) : state[type]===it.id;
+      return `<button class="chip ${on?'on':''}" data-id="${it.id}" data-type="${type}">${it.label}${it.desc?`<span class="d">${it.desc}</span>`:''}</button>`;
+    }).join('');
+  };
+  mk(document.getElementById('c-audience'), C.planner.audiences, 'audience');
+  mk(document.getElementById('c-goals'), C.planner.goals, 'goals');
+  mk(document.getElementById('c-duration'), C.planner.durations, 'duration');
+  mk(document.getElementById('c-format'), C.planner.format, 'format');
+  document.querySelectorAll('.chip').forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      const id = ch.dataset.id, type = ch.dataset.type;
+      if(type==='goals'){
+        if(state.goals.has(id)) state.goals.delete(id); else state.goals.add(id);
+        if(state.goals.size===0) state.goals.add(id);
+      } else state[type] = id;
+      renderChips(); renderPlan();
+    });
+  });
+}
+
+function renderPlan(){
+  const aud = C.planner.audiences.find(a=>a.id===state.audience);
+  const goalIds = [...state.goals];
+  const goals = goalIds.map(g=>C.planner.goals.find(x=>x.id===g));
+  const dur = C.planner.durations.find(d=>d.id===state.duration);
+  const fmt = C.planner.format.find(f=>f.id===state.format);
+
+  const moduleBank = {
+    literacy:[{t:'Czym jest, a czym nie jest AI',h:1},{t:'Klasy modeli i ich zastosowania',h:1},{t:'Ćwiczenie: rozpoznaj problem AI',h:1}],
+    strategy:[{t:'Mapa okazji w organizacji',h:1.5},{t:'Model operacyjny AI',h:1.5},{t:'Decyzje build / buy / partner',h:1},{t:'KPI i kryteria sukcesu',h:1}],
+    prompt:[{t:'Anatomia dobrego promptu',h:1},{t:'Wzorce agentowe i kompozycyjne',h:2},{t:'Ograniczanie halucynacji, ewaluacja',h:1.5},{t:'Ćwiczenia na materiale uczestników',h:2}],
+    risk:[{t:'AI Act — obowiązki Pańskiej organizacji',h:1.5},{t:'Klasyfikacja ryzyka systemów',h:1},{t:'Governance i odpowiedzialność',h:1}],
+    change:[{t:'Gotowość zespołów do zmiany',h:1},{t:'Projekt pilotażowy jako nośnik zmiany',h:1.5},{t:'Komunikacja wewnętrzna wokół AI',h:1}]
+  };
+  let pool = [];
+  goalIds.forEach(g => pool = pool.concat(moduleBank[g]||[]));
+  const budget = dur.hours - 1;
+  const picked = []; let acc = 0;
+  for(const m of pool){
+    if(acc + m.h <= budget){ picked.push(m); acc += m.h; }
+    if(acc >= budget) break;
+  }
+  picked.unshift({t:'Wprowadzenie i kontekst organizacji',h:0.5});
+  picked.push({t:'Sesja Q&A i ustalenia następcze',h:0.5});
+
+  const byAud = {board:'AI jako decyzja zarządcza',mid:'AI w procesach i zespołach',tech:'Praktyka AI dla zespołu technicznego',ops:'AI w codziennej pracy zespołu',admin:'AI w administracji publicznej'};
+  const suffix = {literacy:'— wprowadzenie',strategy:'— strategia i decyzje',prompt:'— warsztat LLM',risk:'— ryzyko i zgodność',change:'— wdrożenie i zmiana'};
+  const title = `${byAud[state.audience] || 'Program AI'} ${suffix[goalIds[0]]||''}`.trim();
+
+  document.getElementById('plan-card').innerHTML = `
+    <div>
+      <div class="pc-top">
+        <span>Szkic programu</span>
+        <span>${new Date().toLocaleDateString('pl-PL')}</span>
+      </div>
+      <div class="plan-title">${title}</div>
+      <div class="plan-sub">${aud.label} · ${dur.label} · ${fmt.label}</div>
+      <div class="plan-mods">
+        ${picked.map((m,i)=>`
+          <div class="plan-mod">
+            <span class="i">M.${String(i+1).padStart(2,'0')}</span>
+            <span class="t">${m.t}</span>
+            <span class="h">${m.h}h</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div>
+      <div class="plan-foot">
+        <div><span class="lbl">Cele</span><span class="v" style="font-size:14px;font-style:italic;color:${'var(--mute)'}">${goals.map(g=>g.label).join(' · ')}</span></div>
+        <div style="text-align:right"><span class="lbl">Łącznie</span><span class="v">${dur.hours}h</span></div>
+      </div>
+      <button class="plan-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Porozmawiajmy o tym szkoleniu →</button>
+    </div>
+  `;
+}
+
+renderChips();
+renderPlan();
+
+// Smooth nav
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click', e=>{
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if(el){ e.preventDefault(); window.scrollTo({top: el.offsetTop - 70, behavior:'smooth'}); }
+  });
+});
+</script>
+</body>
+</html>
