@@ -362,7 +362,8 @@
         <p class="contact-body" id="contact-body"></p>
         <div class="contact-lines" id="contact-lines"></div>
       </div>
-      <form class="form" onsubmit="event.preventDefault();alert('Dziękuję. Odpowiem w ciągu dwóch dni roboczych.');">
+      <!-- FORMULARZ: aby włączyć, usuń atrybut style="display:none" z tagu <form> poniżej -->
+      <form class="form" style="display:none" onsubmit="event.preventDefault();alert('Dziękuję. Odpowiem w ciągu dwóch dni roboczych.');">
         <label>Imię i nazwisko</label>
         <input type="text" required placeholder="Jak się zwracać?">
         <label>Organizacja</label>
