@@ -4,7 +4,7 @@
 window.GWS_CONTENT = {
   brand: {
     domain: "gws.pl",
-    owner: "dr Grzegorz Wojarnik",
+    owner: "dr inż. [Imię Nazwisko]",
     role: "Doradztwo strategiczne i szkolenia z zakresu sztucznej inteligencji",
     short: "Łączę wieloletnie doświadczenie akademickie z praktyką budowy systemów informatycznych, doradzając zarządom i zespołom, jak wdrażać AI odpowiedzialnie i z mierzalnym skutkiem."
   },
@@ -84,7 +84,7 @@ window.GWS_CONTENT = {
         code: "B",
         title: "Aplikacje desktopowe na zamówienie",
         subtitle: "Projektowanie i programowanie",
-        body: "Projektuję i programuję aplikacje desktopowe dla organizacji, które potrzebują narzędzi szytych na miarę — od analityki i raportowania, po systemy wspierające procesy produkcyjne i operacyjne. Pełen cykl: architektura, implementacja, wdrożenie, utrzymanie.",
+        body: "Projektuję i doradzam w zakresie aplikacji desktopowe dla organizacji, które potrzebują narzędzi szytych na miarę — od analityki i raportowania, po systemy wspierające procesy produkcyjne i operacyjne.",
         format: "Projekty indywidualne · Wsparcie długoterminowe"
       }
     ]
@@ -93,7 +93,7 @@ window.GWS_CONTENT = {
   faq: [
     {
       q: "Czy pracuje Pan wyłącznie z dużymi organizacjami?",
-      a: "Nie. Pracuję z zarządami dużych firm, z MŚP, które potrzebują praktycznych szkoleń, oraz z jednostkami administracji publicznej. Forma współpracy jest dopasowywana do skali i dojrzałości organizacji."
+      a: "Nie. Moja oferta jest skierowana do zarządów dużych firm, z MŚP, które potrzebują praktycznych szkoleń, oraz z jednostkami administracji publicznej. Forma współpracy jest dopasowywana do skali i dojrzałości organizacji."
     },
     {
       q: "Jak wygląda pierwsze spotkanie?",
@@ -101,7 +101,7 @@ window.GWS_CONTENT = {
     },
     {
       q: "Czy prowadzi Pan szkolenia zdalnie?",
-      a: "Tak, ale preferuję format stacjonarny, szczególnie dla kadry zarządzającej. Szkolenia techniczne zdalne są równie skuteczne, jeśli grupa jest nieliczna i dobrze sprofilowana."
+      a: "Tak, to jest najprostsza a najbardziej komfortowa czasowo forma kontaktu. Szkolenia techniczne zdalne są równie skuteczne, jeśli grupa jest nieliczna i dobrze sprofilowana."
     },
     {
       q: "Jakie są koszty współpracy?",
@@ -112,8 +112,8 @@ window.GWS_CONTENT = {
       a: "Tak, jeżeli charakter sprawy tego wymaga. Proszę o taką informację przy umawianiu spotkania."
     },
     {
-      q: "Czy mogę otrzymać referencje?",
-      a: "Tak, po pierwszej rozmowie i ustaleniu, że współpraca ma sens. Część klientów prosi o dyskrecję — respektuję to i referencji nie publikuję masowo."
+      q: "Jakie jest Pana doświadczenie?",
+      a: "Obejmuje ono ponad 20 lat w dydaktyce i nauce jako pracownik naukowy Uniwersytetu Szczecińskiego oraz praktyka biznesowa poprzez projektowanie, zapewnienie rozwoju systemów informatycznych w różnorodnych branżach."
     }
   ],
 
@@ -149,9 +149,9 @@ window.GWS_CONTENT = {
     lead: "Najprostszą drogą jest krótka wiadomość z kontekstem.",
     body: "Odpowiadam osobiście, zwykle w ciągu dwóch dni roboczych. Na pierwszą rozmowę rezerwuję 45 minut; jest bezpłatna i niezobowiązująca.",
     lines: [
-      { k: "E-mail",       v: "biuro@gws.pl" },
+      { k: "E-mail",       v: "kontakt@gws.pl" },
       { k: "Telefon",      v: "dostępny po umówieniu spotkania" },
-      { k: "LinkedIn",     v: "linkedin.com/in/grzegorz-wojarnik" },
+      { k: "LinkedIn",     v: "linkedin.com/in/—" },
       { k: "Siedziba",     v: "Polska · współpraca zdalna i wyjazdowa" }
     ]
   }
