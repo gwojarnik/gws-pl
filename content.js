@@ -113,7 +113,7 @@ window.GWS_CONTENT = {
     },
     {
       q: "Jakie jest Pana doświadczenie?",
-      a: "Obejmuje ono ponad 20 lat w dydaktyce i nauce jako pracownik naukowy Uniwersytetu Szczecińskiego oraz praktykę biznesową poprzez projektowanie, zapewnienie rozwoju systemów informatycznych w różnorodnych branżach."
+      a: "Obejmuje ono ponad 20 lat w dydaktyce i nauce jako pracownik naukowy Uniwersytetu Szczecińskiego oraz praktyka biznesowa poprzez projektowanie, zapewnienie rozwoju systemów informatycznych w różnorodnych branżach."
     }
   ],
 
