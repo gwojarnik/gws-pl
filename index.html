@@ -47,6 +47,42 @@
   .hero-actions{display:flex;gap:14px;flex-wrap:wrap}
   .hero-art{position:relative;aspect-ratio:1/.85;border-radius:24px;overflow:hidden}
   .hero-art svg{position:absolute;inset:0;width:100%;height:100%}
+  /* Animacja "żyjącej" sieci neuronowej w hero */
+  @keyframes drift1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-14px,10px) scale(1.05)} }
+  @keyframes drift2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(18px,-12px) scale(1.07)} }
+  @keyframes drift3 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-10px,-14px) scale(1.04)} }
+  @keyframes corePulse { 0%,100%{r:8;opacity:1} 50%{r:11;opacity:.85} }
+  @keyframes haloPulse { 0%,100%{r:32;opacity:.55} 50%{r:48;opacity:.15} }
+  @keyframes satSpin   { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes satSpinR  { from{transform:rotate(0deg)} to{transform:rotate(-360deg)} }
+  @keyframes nodeBreath{ 0%,100%{r:5;opacity:.95} 50%{r:7;opacity:.7} }
+  @keyframes synapse   { 0%{stroke-dashoffset:80;opacity:.15} 50%{opacity:.85} 100%{stroke-dashoffset:0;opacity:.15} }
+  @keyframes spark     { 0%{opacity:0;transform:translate(0,0)} 10%{opacity:1} 100%{opacity:0;transform:translate(var(--tx,0),var(--ty,0))} }
+  .ha-w1{animation:drift1 14s ease-in-out infinite;transform-origin:380px 200px}
+  .ha-w2{animation:drift2 18s ease-in-out infinite;transform-origin:180px 400px}
+  .ha-w3{animation:drift3 16s ease-in-out infinite;transform-origin:480px 420px}
+  .ha-core{animation:corePulse 3.4s ease-in-out infinite;transform-origin:center}
+  .ha-halo{animation:haloPulse 3.4s ease-in-out infinite;transform-origin:center}
+  .ha-orbit-a{animation:satSpin 28s linear infinite;transform-origin:300px 255px;transform-box:fill-box}
+  .ha-orbit-b{animation:satSpinR 36s linear infinite;transform-origin:300px 255px;transform-box:fill-box}
+  .ha-node{animation:nodeBreath 2.6s ease-in-out infinite;transform-origin:center}
+  .ha-node:nth-child(2){animation-delay:.4s}
+  .ha-node:nth-child(3){animation-delay:.8s}
+  .ha-node:nth-child(4){animation-delay:1.2s}
+  .ha-link{stroke-dasharray:6 6;animation:synapse 4s linear infinite}
+  .ha-link:nth-child(2){animation-delay:.6s}
+  .ha-link:nth-child(3){animation-delay:1.2s}
+  .ha-link:nth-child(4){animation-delay:1.8s}
+  .ha-link:nth-child(5){animation-delay:2.4s}
+  .ha-link:nth-child(6){animation-delay:3s}
+  .ha-spark{animation:spark 2.6s ease-out infinite}
+  .ha-spark:nth-child(1){--tx:-90px;--ty:-65px;animation-delay:.2s}
+  .ha-spark:nth-child(2){--tx:88px;--ty:-50px;animation-delay:.9s}
+  .ha-spark:nth-child(3){--tx:-70px;--ty:80px;animation-delay:1.6s}
+  .ha-spark:nth-child(4){--tx:95px;--ty:55px;animation-delay:2.2s}
+  @media (prefers-reduced-motion:reduce){
+    .ha-w1,.ha-w2,.ha-w3,.ha-core,.ha-halo,.ha-orbit-a,.ha-orbit-b,.ha-node,.ha-link,.ha-spark{animation:none}
+  }
   @media (max-width:900px){.hero-grid{grid-template-columns:1fr}.hero{padding:48px 0 64px}.hero-art{aspect-ratio:1/.7}}
 
   section{padding:88px 0;border-top:1px solid var(--line)}
@@ -205,10 +241,57 @@
             <radialGradient id="wash3" cx="80%" cy="80%" r="40%"><stop offset="0%" stop-color="#a87a3e" stop-opacity=".6"/><stop offset="100%" stop-color="#a87a3e" stop-opacity="0"/></radialGradient>
           </defs>
           <rect width="600" height="510" fill="#f7f1e6"/>
-          <ellipse cx="380" cy="200" rx="260" ry="220" fill="url(#wash1)"/>
-          <ellipse cx="180" cy="400" rx="200" ry="160" fill="url(#wash2)"/>
-          <ellipse cx="480" cy="420" rx="180" ry="140" fill="url(#wash3)"/>
-          <g fill="none" stroke="#c89758" stroke-width="1" opacity=".5"><circle cx="380" cy="200" r="120"/><circle cx="380" cy="200" r="180"/></g>
+          <ellipse class="ha-w1" cx="380" cy="200" rx="260" ry="220" fill="url(#wash1)"/>
+          <ellipse class="ha-w2" cx="180" cy="400" rx="200" ry="160" fill="url(#wash2)"/>
+          <ellipse class="ha-w3" cx="480" cy="420" rx="180" ry="140" fill="url(#wash3)"/>
+
+          <!-- statyczne pierścienie -->
+          <g fill="none" stroke="#c89758" stroke-width="1" opacity=".4">
+            <circle cx="300" cy="255" r="120"/>
+            <circle cx="300" cy="255" r="180"/>
+          </g>
+
+          <!-- synapsy / połączenia (grupa, animacja per-link) -->
+          <g stroke="#a87a3e" stroke-width="1.2" fill="none" opacity=".75">
+            <line class="ha-link" x1="300" y1="255" x2="200" y2="170"/>
+            <line class="ha-link" x1="300" y1="255" x2="410" y2="155"/>
+            <line class="ha-link" x1="300" y1="255" x2="445" y2="290"/>
+            <line class="ha-link" x1="300" y1="255" x2="365" y2="385"/>
+            <line class="ha-link" x1="300" y1="255" x2="195" y2="345"/>
+            <line class="ha-link" x1="300" y1="255" x2="155" y2="240"/>
+          </g>
+
+          <!-- iskry sygnałowe wędrujące od rdzenia -->
+          <g fill="#fff" opacity=".9">
+            <circle class="ha-spark" cx="300" cy="255" r="3"/>
+            <circle class="ha-spark" cx="300" cy="255" r="2.5"/>
+            <circle class="ha-spark" cx="300" cy="255" r="2.5"/>
+            <circle class="ha-spark" cx="300" cy="255" r="3"/>
+          </g>
+
+          <!-- orbita zewnętrzna -->
+          <g class="ha-orbit-a">
+            <g transform="translate(300 255)">
+              <circle class="ha-node" cx="0" cy="-180" r="6" fill="#a87a3e"/>
+              <circle class="ha-node" cx="170" cy="60"  r="5" fill="#c89758"/>
+              <circle class="ha-node" cx="-150" cy="90" r="5" fill="#b8916a"/>
+            </g>
+          </g>
+
+          <!-- orbita wewnętrzna w przeciwnym kierunku -->
+          <g class="ha-orbit-b">
+            <g transform="translate(300 255)">
+              <circle class="ha-node" cx="120" cy="-30" r="4" fill="#a87a3e"/>
+              <circle class="ha-node" cx="-90" cy="-80" r="4" fill="#c89758"/>
+              <circle class="ha-node" cx="-30" cy="115" r="4" fill="#b8916a"/>
+              <circle class="ha-node" cx="105" cy="65"  r="4" fill="#8d6b4a"/>
+            </g>
+          </g>
+
+          <!-- aureola i rdzeń -->
+          <circle class="ha-halo" cx="300" cy="255" r="32" fill="#c89758" opacity=".4"/>
+          <circle class="ha-core" cx="300" cy="255" r="9"  fill="#a87a3e"/>
+          <circle cx="300" cy="255" r="3.5" fill="#fff"/>
         </svg>
       </div>
     </div>
@@ -326,15 +409,9 @@
 <script src="i18n/translations.js"></script>
 <script>
 const LANGS = ['pl','en'];
-function readSavedLang(){
-  try { return localStorage.getItem('gws_lang'); }
-  catch(e) { return null; }
-}
-function saveLang(lang){
-  try { localStorage.setItem('gws_lang', lang); }
-  catch(e) {}
-}
-let LANG = (readSavedLang() || (navigator.language||'pl').slice(0,2));
+function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function safeSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+let LANG = (safeGet('gws_lang') || (navigator.language||'pl').slice(0,2));
 if(!LANGS.includes(LANG)) LANG = 'pl';
 let T = {};
 
@@ -366,24 +443,27 @@ function getPath(obj, path){ return path.split('.').reduce((a,k)=>a&&a[k], obj);
 const state = { audience:'board', goals:new Set(['strategy']), duration:'full', format:'onsite' };
 
 async function loadLang(lang){
-  try {
-    if(window.GWS_TRANSLATIONS && window.GWS_TRANSLATIONS[lang]){
-      T = window.GWS_TRANSLATIONS[lang];
-    } else {
+  // 1) Lokalny fallback (działa pod file://)
+  if (window.GWS_TRANSLATIONS && window.GWS_TRANSLATIONS[lang]) {
+    T = window.GWS_TRANSLATIONS[lang];
+  } else {
+    // 2) Tryb serwerowy — pobranie JSON
+    try {
       const res = await fetch(`i18n/${lang}.json`);
-      if(!res.ok) throw new Error(`Could not load ${lang} translations`);
       T = await res.json();
+    } catch (e) {
+      console.warn('i18n fetch failed, falling back', e);
+      if (window.GWS_TRANSLATIONS) {
+        T = window.GWS_TRANSLATIONS[lang] || window.GWS_TRANSLATIONS.pl || {};
+      } else {
+        T = {};
+      }
     }
-  } catch(e) {
-    console.warn('Falling back to bundled Polish translations.', e);
-    lang = 'pl';
-    T = window.GWS_TRANSLATIONS && window.GWS_TRANSLATIONS.pl;
-    if(!T) return;
   }
   LANG = lang;
-  saveLang(lang);
+  safeSet('gws_lang', lang);
   document.documentElement.lang = lang;
-  document.title = T.meta.title;
+  if (T && T.meta && T.meta.title) document.title = T.meta.title;
   render();
 }
 
