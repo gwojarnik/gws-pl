@@ -1,0 +1,152 @@
+/* ──────────────────────────────────────────────────────────────
+   gws.pl — Color system
+   Obsidian-first. Dark is the canonical theme; [data-theme="light"]
+   is a separately tuned warm-paper theme (NOT an inversion).
+
+   Layers: page → sunken → card → raised → overlay
+   Accent: a single restrained ink-violet, used SOLID (never as a
+   generic AI gradient). Glow is minimal and intentional.
+
+   The 10-color "node palette" is the signature system element —
+   one hue per graph node type. Vivid on obsidian; deepened on paper.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: dark;
+
+  /* ── Obsidian greyscale (cool undertone) ───────────────────── */
+  --obsidian-1000: #07070a;
+  --obsidian-950:  #0a0a0f;
+  --obsidian-900:  #0f0f16;
+  --obsidian-850:  #14141d;
+  --obsidian-800:  #1b1b26;
+  --obsidian-750:  #222230;
+  --obsidian-700:  #2b2b3b;
+  --obsidian-600:  #3a3a4e;
+  --obsidian-500:  #4d4d64;
+
+  /* ── Ink (text ramp on dark) ───────────────────────────────── */
+  --ink-100: #f5f4fc;
+  --ink-200: #dad9e8;
+  --ink-300: #b2b1c8;
+  --ink-400: #87869e;
+  --ink-500: #5f5e76;
+
+  /* ── Accent — ink violet ───────────────────────────────────── */
+  --violet-200: #cfc7ff;
+  --violet-300: #b6abff;
+  --violet-400: #9b8dff;
+  --violet-500: #8472f5;
+  --violet-600: #6c59e2;
+  --violet-700: #5544c0;
+  --violet-800: #3f3192;
+
+  /* ── Node-type categorical palette ─────────────────────────── */
+  --node-core:     #b6abff;
+  --node-idea:     #8e9cff;
+  --node-service:  #5fa0ff;
+  --node-audience: #34c9b1;
+  --node-goal:     #ecab46;
+  --node-module:   #99a2bb;
+  --node-tech:     #46c9e6;
+  --node-result:   #ff7e93;
+  --node-extra:    #a9da64;
+  --node-contact:  #f2c44d;
+
+  /* ── Status ────────────────────────────────────────────────── */
+  --success: #44c98a;
+  --warning: #ecab46;
+  --danger:  #ff6b7d;
+
+  /* ── Semantic surfaces ─────────────────────────────────────── */
+  --bg-base:        var(--obsidian-950);
+  --bg-sunken:      var(--obsidian-1000);
+  --surface-card:   var(--obsidian-850);
+  --surface-raised: var(--obsidian-800);
+  --surface-inset:  var(--obsidian-900);
+  --surface-overlay: rgba(16, 16, 24, 0.78);
+
+  /* ── Borders / hairlines (violet-tinted) ───────────────────── */
+  --border-subtle:  rgba(167, 158, 235, 0.07);
+  --border-default: rgba(167, 158, 235, 0.13);
+  --border-strong:  rgba(172, 163, 238, 0.24);
+  --border-accent:  rgba(132, 114, 245, 0.45);
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  --text-primary:   var(--ink-100);
+  --text-secondary: var(--ink-300);
+  --text-muted:     var(--ink-400);
+  --text-faint:     var(--ink-500);
+  --text-accent:    var(--violet-300);
+  --text-on-accent: #0b0a12;
+
+  /* ── Accent roles ──────────────────────────────────────────── */
+  --accent:        var(--violet-500);
+  --accent-hover:  var(--violet-400);
+  --accent-press:  var(--violet-600);
+  --accent-soft:   rgba(132, 114, 245, 0.13);
+  --accent-line:   rgba(132, 114, 245, 0.38);
+  --accent-glow:   rgba(132, 114, 245, 0.30);
+
+  /* ── Graph canvas ──────────────────────────────────────────── */
+  --graph-bg-1:     #0c0c13;
+  --graph-bg-2:     #08080d;
+  --graph-grid:     rgba(150, 144, 200, 0.045);
+  --graph-edge:     rgba(150, 144, 200, 0.14);
+  --graph-edge-hot: rgba(157, 143, 255, 0.55);
+  --graph-node-ring: rgba(245, 244, 252, 0.10);
+}
+
+/* ── Light theme — warm paper, separately tuned ──────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-base:        #f3f1ea;
+  --bg-sunken:      #e9e6dd;
+  --surface-card:   #ffffff;
+  --surface-raised: #faf9f5;
+  --surface-inset:  #efece4;
+  --surface-overlay: rgba(255, 255, 255, 0.82);
+
+  --border-subtle:  rgba(38, 32, 58, 0.07);
+  --border-default: rgba(38, 32, 58, 0.12);
+  --border-strong:  rgba(38, 32, 58, 0.20);
+  --border-accent:  rgba(91, 74, 209, 0.40);
+
+  --text-primary:   #1a1722;
+  --text-secondary: #3e3a4c;
+  --text-muted:     #6a6678;
+  --text-faint:     #9794a4;
+  --text-accent:    #5b4ad1;
+  --text-on-accent: #ffffff;
+
+  --accent:        #5b4ad1;
+  --accent-hover:  #4a3ab8;
+  --accent-press:  #3c2da0;
+  --accent-soft:   rgba(91, 74, 209, 0.10);
+  --accent-line:   rgba(91, 74, 209, 0.32);
+  --accent-glow:   rgba(91, 74, 209, 0.18);
+
+  /* node hues deepened for contrast on paper */
+  --node-core:     #5b4ad1;
+  --node-idea:     #4d57d6;
+  --node-service:  #2c6fd6;
+  --node-audience: #0c9784;
+  --node-goal:     #b1741a;
+  --node-module:   #5d6480;
+  --node-tech:     #1593b3;
+  --node-result:   #d84a63;
+  --node-extra:    #6f9c2a;
+  --node-contact:  #c79518;
+
+  --success: #0f9d6b;
+  --warning: #b1741a;
+  --danger:  #d84a63;
+
+  --graph-bg-1:     #f0ede4;
+  --graph-bg-2:     #e7e3d9;
+  --graph-grid:     rgba(40, 34, 70, 0.05);
+  --graph-edge:     rgba(40, 34, 70, 0.13);
+  --graph-edge-hot: rgba(91, 74, 209, 0.50);
+  --graph-node-ring: rgba(26, 23, 34, 0.10);
+}
