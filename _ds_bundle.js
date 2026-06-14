@@ -2432,9 +2432,9 @@ function Footer({
   }, t.footer.rights), /*#__PURE__*/React.createElement("div", {
     className: "footer__legal"
   }, /*#__PURE__*/React.createElement("a", {
-    href: "#"
+    href: "polityka-prywatnosci.html"
   }, t.footer.privacy), /*#__PURE__*/React.createElement("a", {
-    href: "#"
+    href: "regulamin.html"
   }, t.footer.terms)))));
 }
 Object.assign(window, {

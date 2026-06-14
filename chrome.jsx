@@ -172,8 +172,8 @@ function Footer({ t, onNav }) {
         <div className="footer__bottom">
           <span className="footer__rights">{t.footer.rights}</span>
           <div className="footer__legal">
-            <a href="#">{t.footer.privacy}</a>
-            <a href="#">{t.footer.terms}</a>
+            <a href="polityka-prywatnosci.html">{t.footer.privacy}</a>
+            <a href="regulamin.html">{t.footer.terms}</a>
           </div>
         </div>
       </div>
