@@ -39,7 +39,7 @@ function GxSearch({ lang, nodes, onPick }) {
           ) : matches.map((n) => (
             <button key={n.id} className="gx__result" onMouseDown={(e) => e.preventDefault()}
               onClick={() => { onPick(n.id); setOpen(false); setQ(''); }}>
-              <span className="rdot" style={{ background: `var(${NODE_VAR[n.type]})` }} />
+              <span className="rdot" style={{ '--_dot': `var(${NODE_VAR[n.type]})` }} />
               <span className="rl">{n.label}</span>
               <span className="rt">{TYPE_NAME[lang][n.type]}</span>
             </button>
@@ -83,6 +83,18 @@ function GxPanel({ t, lang, node, related, history, onClose, onSelect, onBook })
           <div className="gx__meta">
             {node.forWhom && <div className="gx__metarow"><span className="gx__metak">{t.panel.forWhom}</span><span className="gx__metav">{node.forWhom}</span></div>}
             {node.format && <div className="gx__metarow"><span className="gx__metak">{t.panel.format}</span><span className="gx__metav">{node.format}</span></div>}
+          </div>
+        )}
+
+        {node.id === 'nav.faq' && t.faq && t.faq.items && (
+          <div className="gx__faq">
+            <div className="gx__seclabel">{t.faq.title}</div>
+            {t.faq.items.map((it, i) => (
+              <details key={i} className="gx__faq-item" open={i === 0}>
+                <summary className="gx__faq-q">{it.q}</summary>
+                <p className="gx__faq-a">{it.a}</p>
+              </details>
+            ))}
           </div>
         )}
 

@@ -2222,6 +2222,15 @@ const Icon = {
     r: "2.4"
   }), /*#__PURE__*/React.createElement("path", {
     d: "M8 8l8-1M7.5 9l8 7.5"
+  })),
+  menu: p => /*#__PURE__*/React.createElement("svg", _extends({
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.8",
+    strokeLinecap: "round"
+  }, p), /*#__PURE__*/React.createElement("path", {
+    d: "M3 6h18M3 12h18M3 18h18"
   }))
 };
 function ThemeToggle({
@@ -2263,8 +2272,17 @@ function Header({
   const {
     Button
   } = window.GwsPlDesignSystem_50b22c;
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const go = id => {
+    setMenuOpen(false);
+    onNav(id);
+  };
+  const book = () => {
+    setMenuOpen(false);
+    onBook();
+  };
   return /*#__PURE__*/React.createElement("header", {
-    className: "hdr"
+    className: "hdr" + (menuOpen ? " is-open" : "")
   }, /*#__PURE__*/React.createElement("div", {
     className: "container hdr__in"
   }, /*#__PURE__*/React.createElement("a", {
@@ -2272,7 +2290,7 @@ function Header({
     href: "#hero",
     onClick: e => {
       e.preventDefault();
-      onNav('hero');
+      go('hero');
     }
   }, /*#__PURE__*/React.createElement("img", {
     src: "./assets/gws-mark.svg",
@@ -2291,7 +2309,7 @@ function Header({
     "aria-current": active === n.id ? 'true' : undefined,
     onClick: e => {
       e.preventDefault();
-      onNav(n.id);
+      go(n.id);
     }
   }, n.label))), /*#__PURE__*/React.createElement("div", {
     className: "hdr__right"
@@ -2311,7 +2329,45 @@ function Header({
     size: "sm",
     arrow: true,
     onClick: onBook
-  }, t.cta.book))));
+  }, t.cta.book)), /*#__PURE__*/React.createElement("button", {
+    className: "hdr__burger",
+    "aria-label": menuOpen ? lang === 'pl' ? 'Zamknij menu' : 'Close menu' : 'Menu',
+    "aria-expanded": menuOpen,
+    onClick: () => setMenuOpen(v => !v)
+  }, menuOpen ? /*#__PURE__*/React.createElement(Icon.x, null) : /*#__PURE__*/React.createElement(Icon.menu, null))), /*#__PURE__*/React.createElement("div", {
+    className: "hdr__mobile",
+    "aria-hidden": !menuOpen
+  }, /*#__PURE__*/React.createElement("nav", {
+    className: "hdr__mnav",
+    "aria-label": "Mobile"
+  }, t.nav.map(n => /*#__PURE__*/React.createElement("a", {
+    key: n.id,
+    className: "hdr__mlink",
+    href: '#' + n.id,
+    "aria-current": active === n.id ? 'true' : undefined,
+    onClick: e => {
+      e.preventDefault();
+      go(n.id);
+    }
+  }, n.label))), /*#__PURE__*/React.createElement("div", {
+    className: "hdr__mrow"
+  }, /*#__PURE__*/React.createElement(LangToggle, {
+    lang: lang,
+    onChange: onLang
+  }), /*#__PURE__*/React.createElement(ThemeToggle, {
+    theme: theme,
+    onToggle: onTheme
+  }), /*#__PURE__*/React.createElement("a", {
+    className: "iconbtn",
+    href: "index.html",
+    "aria-label": lang === 'pl' ? 'Otwórz graf wiedzy' : 'Open knowledge graph'
+  }, /*#__PURE__*/React.createElement(Icon.graph, null))), /*#__PURE__*/React.createElement(Button, {
+    variant: "primary",
+    size: "lg",
+    full: true,
+    arrow: true,
+    onClick: book
+  }, t.cta.book)));
 }
 function Footer({
   t,
@@ -2607,7 +2663,7 @@ function GxSearch({
   }, /*#__PURE__*/React.createElement("span", {
     className: "rdot",
     style: {
-      background: `var(${NODE_VAR[n.type]})`
+      '--_dot': `var(${NODE_VAR[n.type]})`
     }
   }), /*#__PURE__*/React.createElement("span", {
     className: "rl"
@@ -2683,7 +2739,19 @@ function GxPanel({
     className: "gx__metak"
   }, t.panel.format), /*#__PURE__*/React.createElement("span", {
     className: "gx__metav"
-  }, node.format))), isContact && /*#__PURE__*/React.createElement("div", {
+  }, node.format))), node.id === 'nav.faq' && t.faq && t.faq.items && /*#__PURE__*/React.createElement("div", {
+    className: "gx__faq"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "gx__seclabel"
+  }, t.faq.title), t.faq.items.map((it, i) => /*#__PURE__*/React.createElement("details", {
+    key: i,
+    className: "gx__faq-item",
+    open: i === 0
+  }, /*#__PURE__*/React.createElement("summary", {
+    className: "gx__faq-q"
+  }, it.q), /*#__PURE__*/React.createElement("p", {
+    className: "gx__faq-a"
+  }, it.a)))), isContact && /*#__PURE__*/React.createElement("div", {
     className: "gx__links"
   }, /*#__PURE__*/React.createElement("a", {
     className: "gx__linkrow",
@@ -2969,23 +3037,7 @@ function Hero({
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("div", {
     className: "hero__stat",
     key: i
-  }, /*#__PURE__*/React.createElement("b", null, s.b), /*#__PURE__*/React.createElement("span", null, s.s))))), /*#__PURE__*/React.createElement("div", {
-    className: "graph-stage",
-    style: {
-      height: 480
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "graph-stage__corner"
-  }, /*#__PURE__*/React.createElement("span", null, t.hero.eyebrow.replace(/ · /g, ' / '))), /*#__PURE__*/React.createElement(KnowledgeGraph, {
-    nodes: nodes,
-    edges: edges,
-    selectedId: selected,
-    theme: theme,
-    height: 480,
-    onSelect: onSelect
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "graph-hint"
-  }, lang === 'pl' ? 'kliknij węzeł, aby eksplorować ↓' : 'click a node to explore ↓')))));
+  }, /*#__PURE__*/React.createElement("b", null, s.b), /*#__PURE__*/React.createElement("span", null, s.s))))))));
 }
 function KnowledgeMap({
   t,

@@ -27,12 +27,6 @@ function Hero({ t, lang, nodes, edges, selected, onSelect, theme }) {
               ))}
             </div>
           </div>
-          <div className="graph-stage" style={{ height: 480 }}>
-            <div className="graph-stage__corner"><span>{t.hero.eyebrow.replace(/ · /g, ' / ')}</span></div>
-            <KnowledgeGraph nodes={nodes} edges={edges} selectedId={selected}
-              theme={theme} height={480} onSelect={onSelect} />
-            <div className="graph-hint">{lang === 'pl' ? 'kliknij węzeł, aby eksplorować ↓' : 'click a node to explore ↓'}</div>
-          </div>
         </div>
       </div>
     </section>

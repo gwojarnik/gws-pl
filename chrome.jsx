@@ -66,6 +66,11 @@ const Icon = {
       <circle cx="6" cy="7" r="2.4" /><circle cx="18" cy="6" r="2.4" /><circle cx="16" cy="18" r="2.4" /><path d="M8 8l8-1M7.5 9l8 7.5" />
     </svg>
   ),
+  menu: (p) => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" {...p}>
+      <path d="M3 6h18M3 12h18M3 18h18" />
+    </svg>
+  ),
 };
 
 function ThemeToggle({ theme, onToggle }) {
@@ -87,10 +92,13 @@ function LangToggle({ lang, onChange }) {
 
 function Header({ t, lang, theme, active, onLang, onTheme, onNav, onBook }) {
   const { Button } = window.GwsPlDesignSystem_50b22c;
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const go = (id) => { setMenuOpen(false); onNav(id); };
+  const book = () => { setMenuOpen(false); onBook(); };
   return (
-    <header className="hdr">
+    <header className={'hdr' + (menuOpen ? ' is-open' : '')}>
       <div className="container hdr__in">
-        <a className="hdr__brand" href="#hero" onClick={(e) => { e.preventDefault(); onNav('hero'); }}>
+        <a className="hdr__brand" href="#hero" onClick={(e) => { e.preventDefault(); go('hero'); }}>
           <img src="./assets/gws-mark.svg" alt="" />
           <span className="hdr__wm">gws<span className="dot">.</span>pl</span>
         </a>
@@ -98,7 +106,7 @@ function Header({ t, lang, theme, active, onLang, onTheme, onNav, onBook }) {
           {t.nav.map((n) => (
             <a key={n.id} className="nav-link" href={'#' + n.id}
               aria-current={active === n.id ? 'true' : undefined}
-              onClick={(e) => { e.preventDefault(); onNav(n.id); }}>{n.label}</a>
+              onClick={(e) => { e.preventDefault(); go(n.id); }}>{n.label}</a>
           ))}
         </nav>
         <div className="hdr__right">
@@ -109,6 +117,26 @@ function Header({ t, lang, theme, active, onLang, onTheme, onNav, onBook }) {
           <ThemeToggle theme={theme} onToggle={onTheme} />
           <Button variant="primary" size="sm" arrow onClick={onBook}>{t.cta.book}</Button>
         </div>
+        <button className="hdr__burger" aria-label={menuOpen ? (lang === 'pl' ? 'Zamknij menu' : 'Close menu') : 'Menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
+          {menuOpen ? <Icon.x /> : <Icon.menu />}
+        </button>
+      </div>
+      <div className="hdr__mobile" aria-hidden={!menuOpen}>
+        <nav className="hdr__mnav" aria-label="Mobile">
+          {t.nav.map((n) => (
+            <a key={n.id} className="hdr__mlink" href={'#' + n.id}
+              aria-current={active === n.id ? 'true' : undefined}
+              onClick={(e) => { e.preventDefault(); go(n.id); }}>{n.label}</a>
+          ))}
+        </nav>
+        <div className="hdr__mrow">
+          <LangToggle lang={lang} onChange={onLang} />
+          <ThemeToggle theme={theme} onToggle={onTheme} />
+          <a className="iconbtn" href="index.html" aria-label={lang === 'pl' ? 'Otwórz graf wiedzy' : 'Open knowledge graph'}>
+            <Icon.graph />
+          </a>
+        </div>
+        <Button variant="primary" size="lg" full arrow onClick={book}>{t.cta.book}</Button>
       </div>
     </header>
   );
