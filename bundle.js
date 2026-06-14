@@ -1485,10 +1485,10 @@ const N = (id, type, importance, targetSection, pl, en) => ({
 const NODES = [/* ── home / core ────────────────────────────────────────── */
 N('core.gws', 'core', 5, 'hero', {
   label: 'gws.pl',
-  summary: 'Strategia. Ludzie. Wyniki. Razem budujemy organizacje gotowe na AI.'
+  summary: 'Strategia. Ludzie. Wyniki. Dzięki AI wspólnie budujemy sprawne organizacje i konkurencyjne biznesy.'
 }, {
   label: 'gws.pl',
-  summary: 'Strategy. People. Results. Together we build organizations ready for AI.'
+  summary: 'Strategy. People. Results. With AI, together we build capable organizations and competitive businesses.'
 }), /* ── navigation spine — the menu, as graph hubs (always labelled) ── */
 N('nav.manifest', 'idea', 4, 'manifest', {
   label: 'Manifest',
@@ -3017,9 +3017,7 @@ function Hero({
     className: "hero__text"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, t.hero.eyebrow), /*#__PURE__*/React.createElement("h1", {
     className: "hero__headline"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "accent"
-  }, lang === 'pl' ? 'Strategia. Ludzie. Wyniki.' : 'Strategy. People. Results.'), ' ', t.hero.headline), /*#__PURE__*/React.createElement("p", {
+  }, t.hero.headline), /*#__PURE__*/React.createElement("p", {
     className: "hero__lead"
   }, t.hero.lead), /*#__PURE__*/React.createElement("div", {
     className: "hero__cta"
@@ -3147,7 +3145,7 @@ window.GWS_I18N = {
   pl: {
     locale: 'pl-PL',
     meta: {
-      title: 'gws.pl — Strategia. Ludzie. Wyniki.',
+      title: 'gws.pl — Dzięki AI wspólnie budujemy sprawne organizacje i konkurencyjne biznesy.',
       description: 'Strategiczne doradztwo, szkolenia AI i praca z organizacjami. Doradzam zarządom, uczę kadrę zarządzającą i prowadzę warsztaty dla zespołów.'
     },
     nav: [{
@@ -3182,7 +3180,7 @@ window.GWS_I18N = {
     },
     hero: {
       eyebrow: 'Strategia · Ludzie · Wyniki',
-      headline: 'Razem budujemy organizacje gotowe na AI.',
+      headline: 'Dzięki AI wspólnie budujemy sprawne organizacje i konkurencyjne biznesy.',
       lead: 'Doradzam zarządom, uczę kadrę zarządzającą i prowadzę warsztaty dla zespołów. Łączę doktorat z ekonomii z dwiema dekadami praktyki w projektowaniu systemów — porządkując złożoność, wzmacniając przewagę i budując trwałą wartość.'
     },
     map: {
@@ -3397,7 +3395,7 @@ window.GWS_I18N = {
   en: {
     locale: 'en-GB',
     meta: {
-      title: 'gws.pl — Strategy. People. Results.',
+      title: 'gws.pl — With AI, together we build capable organizations and competitive businesses.',
       description: 'Strategic advisory, AI training and working with organizations. I advise boards, train executives and run workshops for teams.'
     },
     nav: [{
@@ -3432,7 +3430,7 @@ window.GWS_I18N = {
     },
     hero: {
       eyebrow: 'Strategy · People · Results',
-      headline: 'Together we build organizations ready for AI.',
+      headline: 'With AI, together we build capable organizations and competitive businesses.',
       lead: 'I advise boards, train executives and run workshops for teams. I combine a PhD in economics with two decades of practice in systems design — bringing order to complexity, strengthening competitive edge and building lasting value.'
     },
     map: {

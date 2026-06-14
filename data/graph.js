@@ -35,8 +35,8 @@ const N = (id, type, importance, targetSection, pl, en) =>
 export const NODES = [
   /* ── home / core ────────────────────────────────────────── */
   N('core.gws', 'core', 5, 'hero',
-    { label: 'gws.pl', summary: 'Strategia. Ludzie. Wyniki. Razem budujemy organizacje gotowe na AI.' },
-    { label: 'gws.pl', summary: 'Strategy. People. Results. Together we build organizations ready for AI.' }),
+    { label: 'gws.pl', summary: 'Strategia. Ludzie. Wyniki. Dzięki AI wspólnie budujemy sprawne organizacje i konkurencyjne biznesy.' },
+    { label: 'gws.pl', summary: 'Strategy. People. Results. With AI, together we build capable organizations and competitive businesses.' }),
 
   /* ── navigation spine — the menu, as graph hubs (always labelled) ── */
   N('nav.manifest', 'idea', 4, 'manifest',

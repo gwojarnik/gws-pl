@@ -12,10 +12,7 @@ function Hero({ t, lang, nodes, edges, selected, onSelect, theme }) {
         <div className="hero__grid">
           <div className="hero__text">
             <Eyebrow>{t.hero.eyebrow}</Eyebrow>
-            <h1 className="hero__headline">
-              <span className="accent">{lang === 'pl' ? 'Strategia. Ludzie. Wyniki.' : 'Strategy. People. Results.'}</span>{' '}
-              {t.hero.headline}
-            </h1>
+            <h1 className="hero__headline">{t.hero.headline}</h1>
             <p className="hero__lead">{t.hero.lead}</p>
             <div className="hero__cta">
               <Button variant="primary" size="lg" arrow onClick={() => onSelect('contact.call')}>{t.cta.book}</Button>
