@@ -178,7 +178,7 @@ function GxApp() {
         <div className="gx__spacer" />
         <div className="gx__right">
           <GxSearch lang={lang} nodes={nodes} onPick={selectNode} />
-          <a className="gx__pagelink" href="index.html">{window.Icon.layout ? window.Icon.layout() : null}<span>{lang === 'pl' ? 'Widok strony' : 'Page view'}</span></a>
+          <a className="gx__pagelink" href="strona.html">{window.Icon.layout ? window.Icon.layout() : null}<span>{lang === 'pl' ? 'Widok strony' : 'Page view'}</span></a>
           <window.LangToggle lang={lang} onChange={setLang} />
           <window.ThemeToggle theme={theme} onToggle={onThemeToggle} />
         </div>

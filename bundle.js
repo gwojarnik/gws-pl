@@ -395,9 +395,32 @@ function resolvePalette(el) {
     edgeHot: g('--graph-edge-hot'),
     ring: g('--graph-node-ring'),
     text: g('--text-secondary'),
-    textFaint: g('--text-faint')
+    textFaint: g('--text-faint'),
+    bg1: g('--graph-bg-1'),
+    bg2: g('--graph-bg-2'),
+    grid: g('--graph-grid')
   };
 }
+const TAU = Math.PI * 2;
+/* parse a CSS color (hex #rgb/#rrggbb or rgb()/rgba()) into {r,g,b} */
+function parseRGB(s) {
+  s = (s || '').trim();
+  if (s[0] === '#') {
+    let h = s.slice(1);
+    if (h.length === 3) h = h.replace(/./g, c => c + c);
+    const n = parseInt(h, 16);
+    return { r: n >> 16 & 255, g: n >> 8 & 255, b: n & 255 };
+  }
+  const m = s.match(/[\d.]+/g) || [0, 0, 0];
+  return { r: +m[0] || 0, g: +m[1] || 0, b: +m[2] || 0 };
+}
+const RGBA = (c, a) => `rgba(${c.r | 0},${c.g | 0},${c.b | 0},${a})`;
+function paletteRGB(pal) {
+  const out = {};
+  for (const k in pal) out[k] = parseRGB(pal[k]);
+  return out;
+}
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
 const radiusFor = imp => 5 + (imp || 1) * 2.3;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 function KnowledgeGraph({
@@ -426,6 +449,11 @@ function KnowledgeGraph({
     w: 0,
     h: 0,
     pal: null,
+    rgb: null,
+    _palTheme: null,
+    t: 0,
+    _last: 0,
+    intro: null,
     view: {
       s: 1,
       tx: 0,
@@ -441,6 +469,13 @@ function KnowledgeGraph({
   });
   const [hoverId, setHoverId] = useState(null);
   const isActive = useCallback(t => !activeTypes || activeTypes.size === 0 || activeTypes.has(t), [activeTypes]);
+  // "live" mirror of frequently-changing inputs so the render loop can read the
+  // latest values WITHOUT being torn down + rebuilt on every selection / filter
+  const liveRef = useRef({});
+  liveRef.current.selectedId = selectedId;
+  liveRef.current.activeTypes = activeTypes;
+  liveRef.current.onSelect = onSelect;
+  liveRef.current.onHover = onHover;
 
   /* (re)initialise layout when the node set changes */
   useEffect(() => {
@@ -467,6 +502,10 @@ function KnowledgeGraph({
       });
     });
     st.alpha = 1;
+    st.intro = {
+      start: performance.now(),
+      dur: 950
+    };
   }, [nodes, height]);
 
   /* simulation + render loop */
@@ -477,6 +516,13 @@ function KnowledgeGraph({
     const ctx = canvas.getContext('2d');
     const st = stateRef.current;
     st.pal = resolvePalette(canvas);
+    st.rgb = paletteRGB(st.pal);
+    // read filter state live (shadows the outer isActive) so filtering doesn't
+    // require re-running this effect
+    const isActive = t => {
+      const at = liveRef.current.activeTypes;
+      return !at || at.size === 0 || at.has(t);
+    };
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const adjacency = new Map();
     nodes.forEach(n => adjacency.set(n.id, new Set()));
@@ -486,19 +532,23 @@ function KnowledgeGraph({
     });
     const typeById = new Map(nodes.map(n => [n.id, n.type]));
 
-    // a fresh selection re-energizes layout + resumes auto-follow
-    st.userView = false;
-    if (selectedId) st.alpha = Math.max(st.alpha, 0.65);
     function resize() {
       const r = wrap.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cw = Math.round(r.width * dpr),
+        chh = Math.round(height * dpr);
       st.w = r.width;
       st.h = height;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = r.width * dpr;
-      canvas.height = height * dpr;
-      canvas.style.width = r.width + 'px';
-      canvas.style.height = height + 'px';
       st._dpr = dpr;
+      // only reassign (which clears the canvas) when the pixel size truly changes,
+      // then repaint immediately so a resize never flashes a blank/cleared frame
+      if (canvas.width !== cw || canvas.height !== chh) {
+        canvas.width = cw;
+        canvas.height = chh;
+        canvas.style.width = r.width + 'px';
+        canvas.style.height = height + 'px';
+        if (st.rgb) draw();
+      }
     }
     resize();
     const ro = new ResizeObserver(resize);
@@ -507,8 +557,23 @@ function KnowledgeGraph({
       return a + (b - a) * t;
     }
     function tick() {
+      const selectedId = liveRef.current.selectedId;
+      // Resolve the themed palette inside the rAF loop (not the effect body):
+      // by the time a frame runs, the consumer's data-theme attribute is already
+      // applied, so toggling theme never leaves the canvas on the stale palette.
+      if (st._palTheme !== theme) {
+        st.pal = resolvePalette(canvas);
+        st.rgb = paletteRGB(st.pal);
+        st._palTheme = theme;
+      }
       const cx = st.w / 2,
         cy = st.h / 2;
+      // visual clock — advances regardless of physics alpha so the graph stays alive
+      const now = performance.now();
+      const dt = st._last ? Math.min((now - st._last) / 16.67, 3) : 1;
+      st._last = now;
+      if (!reduce) st.t += dt;
+      if (reduce) st.intro = null;
       if (st.alpha > 0.02 && !reduce) {
         // repulsion
         for (let i = 0; i < nodes.length; i++) {
@@ -600,10 +665,55 @@ function KnowledgeGraph({
       st.raf = requestAnimationFrame(tick);
     }
     function draw() {
+      const selectedId = liveRef.current.selectedId;
+      const activeTypes = liveRef.current.activeTypes;
       const pal = st.pal,
+        rgb = st.rgb || {},
         dpr = st._dpr || 1;
+      const dark = theme !== 'light';
+      const ADD = dark ? 'lighter' : 'source-over';
+      const GLOW = dark ? 1 : 0.45;
+
+      // intro progress (0→1, eased); collapses to 1 under reduced-motion
+      let ip = 1;
+      if (st.intro) {
+        if (reduce) {
+          st.intro = null;
+        } else {
+          const raw = clamp((performance.now() - st.intro.start) / st.intro.dur, 0, 1);
+          ip = easeOutCubic(raw);
+          if (raw >= 1) st.intro = null;
+        }
+      }
+
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, st.w, st.h);
+
+      // ── animated background (fullscreen only; embeds keep their card bg) ──
+      if (fullscreen && rgb.bg1) {
+        const bg = ctx.createRadialGradient(st.w * 0.5, st.h * 0.28, 0, st.w * 0.5, st.h * 0.5, Math.hypot(st.w, st.h) * 0.62);
+        bg.addColorStop(0, RGBA(rgb.bg1, 1));
+        bg.addColorStop(1, RGBA(rgb.bg2, 1));
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, st.w, st.h);
+        // slowly drifting nebula in accent hues
+        ctx.save();
+        ctx.globalCompositeOperation = dark ? 'lighter' : 'multiply';
+        const hues = [rgb.core, rgb.technology, rgb.result];
+        for (let i = 0; i < 3; i++) {
+          const nx = st.w * (0.28 + 0.22 * i) + Math.sin(st.t * 0.0009 + i * 1.7) * st.w * 0.1;
+          const ny = st.h * (0.34 + 0.18 * Math.sin(i * 2.1)) + Math.cos(st.t * 0.0008 + i) * st.h * 0.08;
+          const R = Math.max(st.w, st.h) * 0.5;
+          const g = ctx.createRadialGradient(nx, ny, 0, nx, ny, R);
+          const hue = hues[i] || rgb.idea;
+          g.addColorStop(0, RGBA(hue, (dark ? 0.09 : 0.05) * GLOW));
+          g.addColorStop(1, RGBA(hue, 0));
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, st.w, st.h);
+        }
+        ctx.restore();
+      }
+
       ctx.translate(st.view.tx, st.view.ty);
       ctx.scale(st.view.s, st.view.s);
       const sc = st.view.s;
@@ -611,29 +721,104 @@ function KnowledgeGraph({
       const neighbors = hov ? adjacency.get(hov) : null;
       const filtering = !!(activeTypes && activeTypes.size > 0);
 
-      // edges
-      edges.forEach(e => {
-        const a = st.pos.get(e.source),
-          b = st.pos.get(e.target);
+      // floated positions — subtle "alive" drift, computed for rendering only
+      // (never written back to st.pos, so pick()/drag stay pixel-accurate)
+      const F = new Map();
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i],
+          p = st.pos.get(n.id);
+        if (!p) continue;
+        if (reduce || n.id === st.drag) {
+          F.set(n.id, p);
+        } else {
+          F.set(n.id, {
+            x: p.x + Math.sin(st.t * 0.02 + i * 1.7) * 0.7,
+            y: p.y + Math.cos(st.t * 0.017 + i * 1.3) * 0.7
+          });
+        }
+      }
+
+      // ── edges (gently curved; hue gradient when hot; draw-in on intro) ──
+      edges.forEach((e, ei) => {
+        const a = F.get(e.source),
+          b = F.get(e.target);
         if (!a || !b) return;
         const active = isActive(typeById.get(e.source)) && isActive(typeById.get(e.target));
         const hot = hov && (e.source === hov || e.target === hov);
+        const dx = b.x - a.x,
+          dy = b.y - a.y;
+        const mx = (a.x + b.x) / 2,
+          my = (a.y + b.y) / 2;
+        const off = (ei % 2 ? 1 : -1) * 0.12;
+        const cxp = mx - dy * off,
+          cyp = my + dx * off;
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = hot ? pal.edgeHot : pal.edge;
-        ctx.lineWidth = (hot ? 1.6 : 0.9) / sc;
-        ctx.globalAlpha = active ? hov && !hot ? 0.22 : 1 : 0.05;
+        ctx.quadraticCurveTo(cxp, cyp, b.x, b.y);
+        if (hot && rgb.core) {
+          const g = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+          g.addColorStop(0, RGBA(rgb[TYPE_KEY[typeById.get(e.source)] || 'idea'] || rgb.idea, 0.95));
+          g.addColorStop(1, RGBA(rgb[TYPE_KEY[typeById.get(e.target)] || 'idea'] || rgb.idea, 0.95));
+          ctx.strokeStyle = g;
+        } else {
+          ctx.strokeStyle = pal.edge;
+        }
+        ctx.lineWidth = (hot ? 1.8 : 0.9) / sc;
+        let ea = active ? hov && !hot ? 0.22 : 1 : 0.05;
+        if (ip < 1) {
+          const L = Math.hypot(dx, dy) || 1;
+          const ep = easeOutCubic(clamp(ip * 1.8 - 0.2, 0, 1));
+          ctx.setLineDash([L, L]);
+          ctx.lineDashOffset = L * (1 - ep);
+          ea *= ep;
+        }
+        ctx.globalAlpha = ea;
         ctx.stroke();
+        if (ip < 1) ctx.setLineDash([]);
       });
       ctx.globalAlpha = 1;
 
-      // nodes
-      nodes.forEach(n => {
-        const p = st.pos.get(n.id);
-        if (!p) return;
-        const color = pal[TYPE_KEY[n.type] || 'idea'] || pal.idea;
+      // ── node bloom (additive, batched; breathing; intro-scaled) ──
+      ctx.save();
+      ctx.globalCompositeOperation = ADD;
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i],
+          p = F.get(n.id);
+        if (!p) continue;
+        const c = rgb[TYPE_KEY[n.type] || 'idea'] || rgb.idea;
+        if (!c) continue;
+        const isHot = n.id === st.hover || n.id === selectedId;
+        const big = isHot || n.type === 'core' || n.importance >= 3;
+        if (!big) continue;
+        const active = isActive(n.type);
+        const related = hov && (n.id === hov || neighbors && neighbors.has(n.id));
+        let a = active ? 1 : 0.12;
+        if (hov && !related) a *= 0.3;
+        if (ip < 1) a *= easeOutCubic(clamp(ip * 1.6 - i * 0.012, 0, 1));
+        if (a <= 0.01) continue;
         const r = radiusFor(n.importance);
+        const breathe = reduce ? 1 : 1 + 0.12 * Math.sin(st.t * 0.04 + i * 1.7);
+        const R = r * (isHot ? 3.1 : 2.2) * breathe;
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, R);
+        g.addColorStop(0, RGBA(c, (isHot ? 0.5 : 0.28) * GLOW * a));
+        g.addColorStop(0.5, RGBA(c, 0.1 * GLOW * a));
+        g.addColorStop(1, RGBA(c, 0));
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, R, 0, TAU);
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.globalAlpha = 1;
+
+      // ── nodes (solid + ring + core corona + label) ──
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i],
+          p = F.get(n.id);
+        if (!p) continue;
+        const color = pal[TYPE_KEY[n.type] || 'idea'] || pal.idea;
+        const c = rgb[TYPE_KEY[n.type] || 'idea'] || rgb.idea;
+        let r = radiusFor(n.importance);
         const active = isActive(n.type);
         const isHov = n.id === st.hover,
           isSel = n.id === selectedId;
@@ -641,27 +826,54 @@ function KnowledgeGraph({
         const inFilter = filtering && activeTypes.has(n.type);
         let alpha = active ? 1 : 0.12;
         if (hov && !related) alpha *= 0.3;
+        let np = 1;
+        if (ip < 1) {
+          np = easeOutCubic(clamp(ip * 1.6 - i * 0.012, 0, 1));
+          alpha *= np;
+        }
+        if (alpha <= 0.01) continue;
+        r *= 0.6 + 0.4 * np;
         ctx.globalAlpha = alpha;
-        if (isHov || isSel || n.type === 'core') {
+        // crisp bloom for the focused node (dark theme only — would muddy paper)
+        if ((isHov || isSel) && c && dark) {
+          ctx.save();
+          ctx.shadowColor = RGBA(c, 0.9);
+          ctx.shadowBlur = 16;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, r + (isHov || isSel ? 9 : 6), 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, r, 0, TAU);
           ctx.fillStyle = color;
-          ctx.globalAlpha = alpha * 0.16;
           ctx.fill();
-          ctx.globalAlpha = alpha;
+          ctx.restore();
         }
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, r, 0, TAU);
         ctx.fillStyle = color;
         ctx.fill();
         ctx.lineWidth = 1.5 / sc;
         ctx.strokeStyle = pal.ring;
         ctx.stroke();
+        // slowly rotating corona for core nodes
+        if (n.type === 'core') {
+          ctx.save();
+          ctx.globalAlpha = alpha * 0.55;
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.4 / sc;
+          if (!reduce) {
+            ctx.setLineDash([2 / sc, 5 / sc]);
+            ctx.lineDashOffset = -st.t * 0.15;
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r + 8 + (reduce ? 0 : 1.5 * Math.sin(st.t * 0.04)), 0, TAU);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.restore();
+        }
         if (isSel) {
+          ctx.globalAlpha = alpha;
           ctx.lineWidth = 2 / sc;
           ctx.strokeStyle = color;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, r + 4, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, r + 4, 0, TAU);
           ctx.stroke();
         }
         const showLabel = n.importance >= 4 || isHov || isSel || related || inFilter;
@@ -675,7 +887,7 @@ function KnowledgeGraph({
           const label = n.label.length > 28 ? n.label.slice(0, 26) + '…' : n.label;
           ctx.fillText(label, p.x, p.y + r + 6 / sc);
         }
-      });
+      }
       ctx.globalAlpha = 1;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
@@ -741,7 +953,7 @@ function KnowledgeGraph({
       if (id !== st.hover) {
         st.hover = id;
         setHoverId(id);
-        onHover && onHover(id);
+        liveRef.current.onHover && liveRef.current.onHover(id);
         canvas.style.cursor = id ? 'pointer' : 'grab';
       }
     }
@@ -768,7 +980,7 @@ function KnowledgeGraph({
       if (st.drag) {
         const id = st.drag;
         st.drag = null;
-        if (!st.dragMoved && onSelect) onSelect(id);
+        if (!st.dragMoved && liveRef.current.onSelect) liveRef.current.onSelect(id);
         st.dragMoved = false;
       } else if (st.panning) {
         st.panning = null;
@@ -778,7 +990,7 @@ function KnowledgeGraph({
     function onLeave() {
       st.hover = null;
       setHoverId(null);
-      onHover && onHover(null);
+      liveRef.current.onHover && liveRef.current.onHover(null);
       if (!st.panning) canvas.style.cursor = 'grab';
     }
     function onWheel(ev) {
@@ -898,7 +1110,15 @@ function KnowledgeGraph({
       canvas.removeEventListener('touchmove', onTouchMove);
       canvas.removeEventListener('touchend', onTouchEnd);
     };
-  }, [nodes, edges, selectedId, activeTypes, theme, height, fullscreen, isActive, onSelect, onHover]);
+  }, [nodes, edges, theme, height, fullscreen]);
+  // selection / filter change: re-energize the layout and resume auto-follow
+  // WITHOUT tearing down the render loop above (which would clear the canvas
+  // and momentarily drop the enhanced rendering)
+  useEffect(() => {
+    const st = stateRef.current;
+    st.userView = false;
+    if (selectedId) st.alpha = Math.max(st.alpha, 0.65);
+  }, [selectedId, activeTypes]);
   ensureStyles();
   return /*#__PURE__*/React.createElement("div", {
     ref: wrapRef,
@@ -2077,7 +2297,7 @@ function Header({
     className: "hdr__right"
   }, /*#__PURE__*/React.createElement("a", {
     className: "iconbtn",
-    href: "graph.html",
+    href: "index.html",
     "aria-label": lang === 'pl' ? 'Otwórz graf wiedzy' : 'Open knowledge graph',
     title: lang === 'pl' ? 'Graf wiedzy' : 'Knowledge graph'
   }, /*#__PURE__*/React.createElement(Icon.graph, null)), /*#__PURE__*/React.createElement(LangToggle, {
@@ -2606,7 +2826,7 @@ function GxApp() {
     onPick: selectNode
   }), /*#__PURE__*/React.createElement("a", {
     className: "gx__pagelink",
-    href: "index.html"
+    href: "strona.html"
   }, window.Icon.layout ? window.Icon.layout() : null, /*#__PURE__*/React.createElement("span", null, lang === 'pl' ? 'Widok strony' : 'Page view')), /*#__PURE__*/React.createElement(window.LangToggle, {
     lang: lang,
     onChange: setLang

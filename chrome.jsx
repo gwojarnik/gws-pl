@@ -102,7 +102,7 @@ function Header({ t, lang, theme, active, onLang, onTheme, onNav, onBook }) {
           ))}
         </nav>
         <div className="hdr__right">
-          <a className="iconbtn" href="graph.html" aria-label={lang === 'pl' ? 'Otwórz graf wiedzy' : 'Open knowledge graph'} title={lang === 'pl' ? 'Graf wiedzy' : 'Knowledge graph'}>
+          <a className="iconbtn" href="index.html" aria-label={lang === 'pl' ? 'Otwórz graf wiedzy' : 'Open knowledge graph'} title={lang === 'pl' ? 'Graf wiedzy' : 'Knowledge graph'}>
             <Icon.graph />
           </a>
           <LangToggle lang={lang} onChange={onLang} />
