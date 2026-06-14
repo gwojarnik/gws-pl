@@ -2726,7 +2726,8 @@ function GxPanel({
     className: "gx__panel-row"
   }, /*#__PURE__*/React.createElement(NodeBadge, {
     type: node.type,
-    size: "lg"
+    size: "lg",
+    label: TYPE_NAME[lang][node.type]
   }), /*#__PURE__*/React.createElement("button", {
     className: "gx__close",
     onClick: onClose,
@@ -3997,6 +3998,7 @@ function ExtrasSection({
     NodeBadge
   } = window.GwsPlDesignSystem_50b22c;
   const items = ['extra.hifi', 'extra.apps'].map(id => byId[id]).filter(Boolean);
+  const extraLabel = t.locale && t.locale.startsWith('pl') ? 'Dodatkowe' : 'Extra';
   return /*#__PURE__*/React.createElement("section", {
     className: "section",
     id: "extras",
@@ -4019,7 +4021,8 @@ function ExtrasSection({
   }, /*#__PURE__*/React.createElement("div", {
     className: "extra-card"
   }, /*#__PURE__*/React.createElement(NodeBadge, {
-    type: "extra"
+    type: "extra",
+    label: extraLabel
   }), /*#__PURE__*/React.createElement("h3", {
     className: "extra-card__t"
   }, n.label), /*#__PURE__*/React.createElement("p", {

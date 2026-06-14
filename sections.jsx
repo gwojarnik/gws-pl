@@ -100,6 +100,7 @@ function ServicesSection({ t, lang, byId, onSelect }) {
 function ExtrasSection({ t, byId, onSelect }) {
   const { Card, Eyebrow, NodeBadge } = window.GwsPlDesignSystem_50b22c;
   const items = ['extra.hifi', 'extra.apps'].map((id) => byId[id]).filter(Boolean);
+  const extraLabel = t.locale && t.locale.startsWith('pl') ? 'Dodatkowe' : 'Extra';
   return (
     <section className="section" id="extras" data-screen-label="Other areas">
       <div className="container">
@@ -111,7 +112,7 @@ function ExtrasSection({ t, byId, onSelect }) {
           {items.map((n) => (
             <Card key={n.id} node="extra" interactive onClick={() => onSelect(n.id)}>
               <div className="extra-card">
-                <NodeBadge type="extra" />
+                <NodeBadge type="extra" label={extraLabel} />
                 <h3 className="extra-card__t">{n.label}</h3>
                 <p className="extra-card__d">{n.summary}</p>
               </div>

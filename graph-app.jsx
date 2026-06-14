@@ -69,7 +69,7 @@ function GxPanel({ t, lang, node, related, history, onClose, onSelect, onBook })
           </div>
         )}
         <div className="gx__panel-row">
-          <NodeBadge type={node.type} size="lg" />
+          <NodeBadge type={node.type} size="lg" label={TYPE_NAME[lang][node.type]} />
           <button className="gx__close" onClick={onClose} aria-label={lang === 'pl' ? 'Zamknij' : 'Close'}>{window.Icon.x()}</button>
         </div>
         <h1 className="gx__title">{node.label}</h1>
