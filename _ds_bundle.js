@@ -556,6 +556,28 @@ function KnowledgeGraph({
     function lerp(a, b, t) {
       return a + (b - a) * t;
     }
+    // default (unselected) view: scale the whole graph to fill the viewport so it
+    // grows with the screen instead of sitting at a fixed size on large monitors.
+    // never shrinks below 1 (mobile/embeds keep today's behaviour) and caps below
+    // the selected-node zoom so clicking a node still reads as a focus-in.
+    function computeFit() {
+      if (!fullscreen || !st.pos.size) return { s: 1, tx: 0, ty: 0 };
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      nodes.forEach(n => {
+        const p = st.pos.get(n.id);
+        if (!p) return;
+        const r = radiusFor(n.importance) + 12;
+        if (p.x - r < minX) minX = p.x - r;
+        if (p.y - r < minY) minY = p.y - r;
+        if (p.x + r > maxX) maxX = p.x + r;
+        if (p.y + r > maxY) maxY = p.y + r;
+      });
+      if (!isFinite(minX)) return { s: 1, tx: 0, ty: 0 };
+      const bw = Math.max(1, maxX - minX), bh = Math.max(1, maxY - minY);
+      const s = clamp(Math.min(st.w / bw, st.h / bh) * 0.96, 1, 2);
+      const bcx = (minX + maxX) / 2, bcy = (minY + maxY) / 2;
+      return { s, tx: st.w / 2 - bcx * s, ty: st.h / 2 - bcy * s };
+    }
     function tick() {
       const selectedId = liveRef.current.selectedId;
       // Resolve the themed palette inside the rAF loop (not the effect body):
@@ -649,11 +671,7 @@ function KnowledgeGraph({
             ty: st.h / 2 - sel.y * s
           };
         } else {
-          st.vt = {
-            s: 1,
-            tx: 0,
-            ty: 0
-          };
+          st.vt = computeFit();
         }
       }
       const k = reduce ? 1 : 0.12;
@@ -1090,11 +1108,7 @@ function KnowledgeGraph({
     };
     ctrlRef.current.fit = () => {
       st.userView = false;
-      st.vt = {
-        s: 1,
-        tx: 0,
-        ty: 0
-      };
+      st.vt = computeFit();
       st.alpha = Math.max(st.alpha, 0.2);
     };
     st.raf = requestAnimationFrame(tick);
