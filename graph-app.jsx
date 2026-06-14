@@ -14,7 +14,7 @@ const TYPE_NAME = {
 function getInitialTheme() {
   const savedTheme = localStorage.getItem('gws-theme');
   const explicitTheme = localStorage.getItem('gws-theme-explicit') === '1';
-  return explicitTheme && savedTheme ? savedTheme : 'light';
+  return explicitTheme && savedTheme ? savedTheme : 'dark';
 }
 
 function GxSearch({ lang, nodes, onPick }) {

@@ -1,6 +1,6 @@
 <!-- @dsCard group="Website" viewport="1280x720" name="gws.pl — graph-only explorer (v2)" subtitle="The whole site as one full-screen knowledge graph; content reached only through nodes" -->
 <!DOCTYPE html>
-<html lang="pl" data-theme="light">
+<html lang="pl" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,12 +17,12 @@
     try {
       var savedTheme = localStorage.getItem('gws-theme');
       var explicitTheme = localStorage.getItem('gws-theme-explicit') === '1';
-      var th = explicitTheme && savedTheme ? savedTheme : 'light';
-      if (!explicitTheme && savedTheme !== 'light') localStorage.setItem('gws-theme', 'light');
+      var th = explicitTheme && savedTheme ? savedTheme : 'dark';
+      if (!explicitTheme && savedTheme !== 'dark') localStorage.setItem('gws-theme', 'dark');
       var lg = localStorage.getItem('gws-lang') || 'pl';
       document.documentElement.setAttribute('data-theme', th);
       document.documentElement.setAttribute('lang', lg);
-    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
   })();
 </script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>

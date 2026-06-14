@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl" data-theme="light">
+<html lang="pl" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,9 +14,9 @@
     try {
       var st = localStorage.getItem('gws-theme');
       var ex = localStorage.getItem('gws-theme-explicit') === '1';
-      document.documentElement.setAttribute('data-theme', ex && st ? st : 'light');
+      document.documentElement.setAttribute('data-theme', ex && st ? st : 'dark');
       document.documentElement.setAttribute('lang', localStorage.getItem('gws-lang') || 'pl');
-    } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+    } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }
   })();
 </script>
 </head>
